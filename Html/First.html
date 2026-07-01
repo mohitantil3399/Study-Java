@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World</title>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            scroll-behavior: smooth;
+            overflow: hidden; /* prevent scrollbars from canvas */
+        }
+
+        nav {
+            background-color: #2c3e50;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 3em;
+            margin-top: 50px;
+            text-shadow: 2px 2px 5px #aaa;
+        }
+
+        p {
+            color: #34495e;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #29b98e;
+        }
+
+        img {
+            margin-top: 40px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        /* Canvas sits behind everything */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none; /* don’t block clicks */
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <nav>
+        <a href="#welcome">Welcome</a>
+        <a href="#image">Image</a>
+        <a href="#footer">Footer</a>
+    </nav>
+
+    <h1 id="welcome">Hello World !!</h1>
+    <p>Welcome to my first styled webpage 🎨</p>
+    <button onclick="alert('Thanks for clicking! 😊')">Click Me!</button>
+
+    <p>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Illo, nesciunt
+        omnis fugit saepe facilis voluptatum rerum molestias, et dolorum, beatae officiis animi.
+        Magni harum, quis pariatur obcaecati perspiciatis non sapiente.
+
+    </p>
+
+    <img id="image" src="HelloWorldImage.webp" alt="Hello World Image">
+
+    <footer id="footer">
+        <p>&copy; 2025 My First Webpage. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const canvasEl = document.getElementById('particleCanvas');
+        if (!(canvasEl instanceof HTMLCanvasElement)) {
+            console.warn('Canvas element not found or is not a <canvas> element. Particle animation disabled.');
+        } else {
+            const canvas = canvasEl;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.warn('2D context not available. Particle animation disabled.');
+            } else {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                let particles = [];
+                // start mouse at canvas center so particles created before first move have sensible coords
+                /** @type {{x: number, y: number}} */
+                const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+
+                // Allowed colors: pink, cyan, light green
+                const colors = [
+                    'rgba(255,105,180,0.8)',  // pink
+                    'rgba(0,255,255,0.8)',    // cyan
+                    'rgba(144,238,144,0.8)'   // light green
+                ];
+
+                // Particle class must be declared before it's used (classes are not hoisted)
+                class Particle {
+                    constructor() {
+                        this.x = mouse.x;
+                        this.y = mouse.y;
+                        this.size = Math.random() * 6 + 2;
+                        this.speedX = (Math.random() * 3) - 1.5;
+                        this.speedY = (Math.random() * 3) - 1.5;
+                        this.color = colors[Math.floor(Math.random() * colors.length)];
+                    }
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        // smoother shrink
+                        if (this.size > 0.2) this.size -= 0.08;
+                    }
+                    draw() {
+                        ctx.fillStyle = this.color;
+                        ctx.shadowColor = this.color;
+                        ctx.shadowBlur = 20; // glow effect
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0; // reset after drawing
+                    }
+                }
+
+                window.addEventListener('mousemove', function(e) {
+                    // use standard properties
+                    mouse.x = e.clientX;
+                    mouse.y = e.clientY;
+                    for (let i = 0; i < 5; i++) {
+                        particles.push(new Particle());
+                    }
+                });
+
+        
+
+        function handleParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].size <= 0.3) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            handleParticles();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Gradient Spinner</title>
+  <style>
+    /* Centers the loader on the page and sets the background color */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f4efeb; 
+      margin: 0;
+    }
+
+    /* Applies the animation to the SVG group */
+    .spinner {
+      transform-origin: 100px 100px; /* The exact center of the 200x200 canvas */
+      animation: spin 3s linear infinite;
+    }
+
+    /* The continuous rotation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loader-container">
+    <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="loader-grad" x1="0" y1="0" x2="200" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#df40ff" />
+          <stop offset="100%" stop-color="#4a30ff" />
+        </linearGradient>
+
+        <ellipse id="petal" cx="100" cy="35" rx="18" ry="28" />
+      </defs>
+
+      <g class="spinner" fill="url(#loader-grad)">
+        <use href="#petal" />
+        <use href="#petal" transform="rotate(51.42, 100, 100)" />
+        <use href="#petal" transform="rotate(102.85, 100, 100)" />
+        <use href="#petal" transform="rotate(154.28, 100, 100)" />
+        <use href="#petal" transform="rotate(205.71, 100, 100)" />
+        <use href="#petal" transform="rotate(257.14, 100, 100)" />
+        <use href="#petal" transform="rotate(308.57, 100, 100)" />
+      </g>
+    </svg>
+  </div>
+
+</body>
+</html>

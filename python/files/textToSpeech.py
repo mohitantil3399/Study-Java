@@ -1,0 +1,100 @@
+import pyttsx3
+speak = pyttsx3.init()
+with open("presentation.txt",'w', encoding = 'UTF-8') as w :
+    w.write('''
+Speakers:
+Speaker 1 (S1)
+Speaker 2 (S2)
+
+Begin Presentation
+
+S1: Good morning, esteemed members of the jury. We are here today to present a strategic recovery plan for Grainwave Foods. This case isn't just about a business problem; it's about a breakdown of trust that shook India's most trusted breakfast brand to its core.
+
+S2: Our strategic roadmap is designed to take Grainwave "From Breakdown to Breakthrough". This is not simply a plan for damage control. It is a comprehensive strategy to restore trust, stabilize operations, and forge a stronger, more resilient company.
+
+
+
+1. The Anatomy of the Crisis
+
+S1: To build a solution, we must first be transparent about the problem. The root cause was the failure of Grainwave's 3-Year Bonded Procurement Model. This model created a critical and unsustainable "Price Gap Crisis".
+
+S2: Let's look at that gap. Grainwave’s contracted rate for oats was Rs. 28/kg. But due to market volatility, the reality for farmers was an open market price of Rs. 38/kg. This Rs. 10 disparity didn't just create friction; it broke the backbone of the company's farmer relationships.
+
+S1: The fallout was immediate and catastrophic. Financially, this led to a 22% sales drop, representing a projected revenue loss of Rs. 92.4 crore. This wasn't just a quarterly setback; it was a fundamental threat to Grainwave's market position.
+
+S2: But the damage went far beyond the balance sheet. The qualitative impact was devastating:
+Broken trust with over 2,400 farming families.
+A viral social media backlash, with #BoycottGrainwave trending nationally.
+And finally, heightened government scrutiny that threatened the brand's reputation and its very license to operate.
+
+
+
+2. The Strategic Crossroads
+
+S1: This crisis presented Grainwave with three fundamentally different options. The choice would define their identity as a company.
+
+S2: Option 1 was 'Financial First,' the CFO's strategy. This involved legally enforcing the Rs. 28 contracts and importing Australian oats to meet production demand. The goal was to preserve short-term margins. The critical risk? Irreversible brand destruction and the permanent loss of their entire domestic supply chain.
+
+S1: Option 2 was 'Ethics First,' the CSR Head's solution. This plan called for immediate payment of the Rs. 36/kg MSP and even retroactive compensation for past deliveries. A noble approach, but it carried a projected Rs. 68 crore loss, pushing the company into financial distress and risking an investor exodus.
+
+S2: One path saved the balance sheet but destroyed the brand. The other saved the brand but destroyed the balance sheet. Neither was a viable future. This led us to our recommendation.
+
+
+
+3. The Recommended Solution: Farm2Future 2.0
+
+S1: We recommend Option 3: The 'Balanced Future,' a hybrid model we've named "Farm2Future 2.0". This plan transforms the crisis into a catalyst. It is the only option that balances ethical commitment with economic viability, protecting both the farmers and the business.
+
+S2: The plan is built on four integrated pillars. The first is the model itself: Launch the Farm2Future 2.0 Model.
+This immediately implements an MSP floor pricing of Rs. 36/kg.
+Crucially, it adds a market-linked premium. The formula is transparent: The farmer receives the Base MSP, *plus* 60% of the difference between the market rate and the MSP.
+This ensures farmers share in market upswings and provides predictable costs for Grainwave.
+
+S1: The second pillar answers the question: "How do you fund this?" Through a Strategic Price Adjustment.
+We will institute a Rs. 4 per pack increase, taking the price from Rs. 35 to Rs. 39.
+This will be communicated as a "Farmer Partnership Premium". Our research shows a 78% consumer willingness to support this move.
+This adjustment is projected to generate Rs. 54 crore annually, directly funding the new, sustainable procurement model.
+
+S2: Third, we must ensure an Operational Continuity Pivot. To meet demand while stabilizing relations in Punjab, we will shift 60% of production to the Ahmedabad facility. We will also activate contingency suppliers in Madhya Pradesh and Maharashtra, with a target to restore full production within four weeks.
+
+S1: Finally, a new Investor Engagement Strategy. Instead of focusing on past problems, we will present Farm2Future 2.0 as a smart, long-term investment in growth. We will show how its strong values—focusing on people and good leadership—make it a standout for future investors by lowering future risks.
+
+
+
+4. Rebuilding Trust: The Communication Plan
+
+S2: A new model is meaningless if no one trusts it. Rebuilding trust requires visible action and radical transparency. Our communication plan is aggressive and founded on ownership.
+
+S1: It begins with CEO Public Accountability. The CEO will deliver a public apology to farmers and personally detail the Farm2Future 2.0 commitments. This will be followed by a "Transparency Pact" Campaign.
+
+S2: This campaign will show consumers *exactly* where their money is going. Of the Rs. 4 increase:
+Rs. 2.80 goes directly to farmers.
+Rs. 0.80 to logistics.
+Rs. 0.40 to transparency infrastructure.
+We will even launch a "Track Your Farmer" feature to show the direct benefit to farming families.
+
+S1: We won't just ask for trust; we will validate it. We will launch a Third-Party Validation Program, inviting agricultural influencers and consumer advocates to independently audit the new contracts. We will also establish an Advisory Council that includes farmer representatives.
+
+S2: Our message is simple and clear. Ownership: "We made a mistake, we're fixing it". Partnership: "Farmers are co-creators, not just suppliers".
+
+
+
+ A New Foundation: Long-Term Strategy
+
+S1: This recovery plan is the foundation for a permanent, long-term transformation. We will create a Diversified Supply Architecture, moving to a 60/30/10 geographic model to reduce concentration risk.
+
+S2: We will enhance governance by establishing an Ethics & Sustainability Review Board with independent directors and farmer representatives. This isn't just a fix; it's an IPO-Ready Transformation. We are positioning this ethical supply chain as a strategic differentiator for the public markets.
+
+
+
+S1: This strategy transforms Grainwave. It secures the partnership of over 2,400 farming families and makes a Rs. 54 crore annual investment in those sustainable relationships. Our timeline for full brand trust restoration is 18 months.
+
+S2: In closing, Grainwave's future will be defined not by this crisis, but by its response to it. The Farm2Future 2.0 plan turns this crisis into the very impetus for creating a more resilient, principled, and valuable company.
+
+S1: Thank you. We would now be happy to answer your questions.
+
+''')
+
+with open("final-presentation.txt","r",encoding = 'UTF-8') as f :
+    speak.say(f.read())
+speak.runAndWait()    

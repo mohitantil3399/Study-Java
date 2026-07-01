@@ -1,0 +1,120 @@
+Notes = """Here’s a detailed set of notes on Object-Oriented Programming (OOP) in Python:
+
+---
+
+Object-Oriented Programming (OOP) in Python – Detailed Notes
+
+1. Introduction to OOP
+- OOP is a programming paradigm based on the concept of "objects".
+- Objects are instances of classes that encapsulate data and behavior.
+- Python supports OOP and allows developers to create reusable and modular code.
+
+2. Key Concepts of OOP
+- Class: A blueprint for creating objects. Defines attributes and methods.
+- Object: An instance of a class.
+- Encapsulation: Bundling data and methods that operate on the data within one unit.
+- Inheritance: Mechanism to create a new class using properties and methods of an existing class.
+- Polymorphism: Ability to use a common interface for different data types.
+- Abstraction: Hiding complex implementation details and showing only the essential features.
+
+3. Defining a Class
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def greet(self):
+        print(f"Hello, my name is {self.name}")
+
+4. Creating an Object
+p1 = Person("Alice", 30)
+p1.greet()  # Output: Hello, my name is Alice
+
+5. The __init__ Method
+- Special method called when an object is instantiated.
+- Used to initialize object attributes.
+
+6. Instance vs Class Variables
+- Instance variables: Unique to each object.
+- Class variables: Shared across all instances of the class.
+
+7. Inheritance
+class Student(Person):
+    def __init__(self, name, age, student_id):
+        super().__init__(name, age)
+        self.student_id = student_id
+
+    def display_id(self):
+        print(f"My student ID is {self.student_id}")
+
+8. Method Overriding
+class Student(Person):
+    def greet(self):
+        print(f"Hi, I'm {self.name}, a student.")
+
+9. Polymorphism
+class Dog:
+    def speak(self):
+        print("Woof!")
+
+class Cat:
+    def speak(self):
+        print("Meow!")
+
+def animal_sound(animal):
+    animal.speak()
+
+animal_sound(Dog())  # Woof!
+animal_sound(Cat())  # Meow!
+
+10. Encapsulation
+class BankAccount:
+    def __init__(self):
+        self.__balance = 0
+
+    def deposit(self, amount):
+        self.__balance += amount
+
+    def get_balance(self):
+        return self.__balance
+
+11. Abstraction
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        pass
+
+12. Special Methods (Magic Methods)
+class Book:
+    def __init__(self, title):
+        self.title = title
+
+    def __str__(self):
+        return f"Book: {self.title}"
+
+13. Composition
+class Engine:
+    def start(self):
+        print("Engine started")
+
+class Car:
+    def __init__(self):
+        self.engine = Engine()
+
+    def drive(self):
+        self.engine.start()
+        print("Car is moving")
+
+14. Benefits of OOP
+- Code reusability
+- Modularity
+- Scalability
+- Easier maintenance
+
+---
+"""
+
+with open("OOPS_Notes.txt", "w", encoding="utf-8") as f:
+    f.write(Notes)

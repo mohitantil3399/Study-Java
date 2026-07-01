@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Neural Visualizer — Decode the Black Box</title>
+    <meta name="description" content="An interactive educational visualization that demystifies how Large Language Models predict text word-by-word using tokenization, neural networks, and probability.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ════════════════════════════════════════════
+           DESIGN SYSTEM
+           ════════════════════════════════════════════ */
+        :root {
+            --bg-deep: #06080f;
+            --bg-surface: #0c1021;
+            --bg-elevated: #121829;
+            --bg-card: rgba(16, 23, 48, 0.65);
+            --border-subtle: rgba(100, 120, 200, 0.12);
+            --border-glow: rgba(100, 160, 255, 0.25);
+            --text-primary: #e8ecf4;
+            --text-secondary: #8892b0;
+            --text-dim: #4a5272;
+            --accent-cyan: #00d4ff;
+            --accent-blue: #4f8cff;
+            --accent-purple: #a78bfa;
+            --accent-violet: #7c3aed;
+            --accent-pink: #f472b6;
+            --accent-green: #34d399;
+            --accent-emerald: #10b981;
+            --accent-amber: #fbbf24;
+            --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.4);
+            --glow-purple: 0 0 20px rgba(167, 139, 250, 0.4);
+            --glow-green: 0 0 20px rgba(52, 211, 153, 0.5);
+            --glow-blue: 0 0 20px rgba(79, 140, 255, 0.4);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-pill: 100px;
+            --glass-bg: rgba(12, 16, 33, 0.6);
+            --glass-border: rgba(100, 140, 255, 0.15);
+            --glass-blur: blur(20px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ════════════════════════════════════════════
+           PARTICLE CANVAS BACKGROUND
+           ════════════════════════════════════════════ */
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Ambient gradient orbs */
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .orb-1 { width: 500px; height: 500px; background: var(--accent-cyan); top: -10%; left: -5%; animation-delay: 0s; }
+        .orb-2 { width: 400px; height: 400px; background: var(--accent-violet); bottom: -10%; right: -5%; animation-delay: -7s; }
+        .orb-3 { width: 350px; height: 350px; background: var(--accent-pink); top: 40%; left: 50%; animation-delay: -14s; }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -20px) scale(1.05); }
+            66% { transform: translate(-20px, 15px) scale(0.95); }
+        }
+
+        /* ════════════════════════════════════════════
+           HEADER
+           ════════════════════════════════════════════ */
+        header {
+            position: relative;
+            z-index: 10;
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 40px; height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--glow-blue);
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-text span {
+            font-size: 11px;
+            color: var(--text-dim);
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .prompt-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .prompt-btn {
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+            padding: 9px 20px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prompt-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+
+        .prompt-btn:hover {
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: var(--glow-blue);
+        }
+
+        .prompt-btn:hover::before { opacity: 1; }
+        .prompt-btn span { position: relative; z-index: 1; }
+
+        .prompt-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dim);
+            font-size: 12px;
+        }
+
+        .speed-control select {
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* ════════════════════════════════════════════
+           MAIN LAYOUT
+           ════════════════════════════════════════════ */
+        .main-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            grid-template-rows: auto 1fr auto;
+            gap: 0;
+            position: relative;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        /* ════════════════════════════════════════════
+           PHASE INDICATOR (Step Progress)
+           ════════════════════════════════════════════ */
+        .phase-strip {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 20px;
+            background: rgba(6, 8, 15, 0.5);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .phase-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: var(--radius-pill);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-dim);
+            border: 1px solid transparent;
+            transition: all 0.5s;
+        }
+
+        .phase-step .phase-num {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.5s;
+        }
+
+        .phase-step.active {
+            color: var(--accent-cyan);
+            border-color: rgba(0, 212, 255, 0.2);
+            background: rgba(0, 212, 255, 0.06);
+        }
+
+        .phase-step.active .phase-num {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+        }
+
+        .phase-step.done {
+            color: var(--accent-green);
+        }
+
+        .phase-step.done .phase-num {
+            background: var(--accent-green);
+            border-color: transparent;
+            color: white;
+        }
+
+        .phase-connector {
+            width: 30px;
+            height: 2px;
+            background: var(--border-subtle);
+            border-radius: 2px;
+            transition: background 0.5s;
+        }
+
+        .phase-connector.done { background: var(--accent-green); }
+        .phase-connector.active { background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan)); }
+
+        /* ════════════════════════════════════════════
+           CENTER PANEL (Network + Output)
+           ════════════════════════════════════════════ */
+        .center-panel {
+            grid-column: 1;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Output Area */
+        .output-zone {
+            padding: 18px 24px;
+            min-height: 80px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .output-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .output-label::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; box-shadow: 0 0 8px var(--accent-green); }
+        }
+
+        #output-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-content: flex-start;
+            min-height: 44px;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+        }
+
+        .output-word {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            opacity: 0;
+            transform: translateY(12px) scale(0.9);
+            animation: wordAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes wordAppear {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .output-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 26px;
+            background: var(--accent-cyan);
+            border-radius: 2px;
+            animation: cursorBlink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Neural Network Canvas */
+        .brain-zone {
+            flex: 1;
+            position: relative;
+        }
+
+        #network-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Math Equation Display */
+        .math-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .math-overlay.visible { opacity: 1; }
+
+        .math-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-purple);
+            margin-bottom: 8px;
+        }
+
+        .math-equation {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--accent-purple);
+            text-shadow: var(--glow-purple);
+            padding: 14px 28px;
+            background: rgba(167, 139, 250, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: var(--radius-lg);
+            animation: mathPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes mathPulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(167, 139, 250, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(167, 139, 250, 0.25); }
+        }
+
+        /* ════════════════════════════════════════════
+           RIGHT SIDEBAR (Probability Panel)
+           ════════════════════════════════════════════ */
+        .sidebar {
+            grid-column: 2;
+            grid-row: 2;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border-left: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .sidebar-header h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-header p {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Token Counter */
+        .token-counter {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .token-counter .label {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .token-counter .count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Probability Bars */
+        .prob-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .prob-list::-webkit-scrollbar { width: 4px; }
+        .prob-list::-webkit-scrollbar-track { background: transparent; }
+        .prob-list::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 4px; }
+
+        .prob-item {
+            position: relative;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .prob-item.winner {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
+        }
+
+        .prob-bar-bg {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            border-radius: var(--radius-sm);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.15;
+            width: 0%;
+        }
+
+        .prob-item.winner .prob-bar-bg {
+            background: var(--accent-green);
+        }
+
+        .prob-item:not(.winner) .prob-bar-bg {
+            background: var(--accent-blue);
+        }
+
+        .prob-item-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .prob-word {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .prob-item.winner .prob-word {
+            color: var(--accent-green);
+        }
+
+        .prob-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dim);
+        }
+
+        .prob-item.winner .prob-value {
+            color: var(--accent-green);
+        }
+
+        /* Info Legend */
+        .sidebar-legend {
+            padding: 14px 18px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
+
+        .legend-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.cyan { background: var(--accent-cyan); }
+        .legend-dot.purple { background: var(--accent-purple); }
+        .legend-dot.green { background: var(--accent-green); }
+
+        /* ════════════════════════════════════════════
+           VOCABULARY POOL (The Street)
+           ════════════════════════════════════════════ */
+        .vocab-zone {
+            grid-column: 1 / -1;
+            grid-row: 3;
+            background: rgba(6, 8, 15, 0.7);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            padding: 14px 24px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .vocab-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vocab-label .vocab-count {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-elevated);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        #the-street {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-content: center;
+            min-height: 100px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+
+        #the-street::-webkit-scrollbar { width: 4px; }
+        #the-street::-webkit-scrollbar-track { background: transparent; }
+        #the-street::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 4px; }
+
+        .street-word {
+            background: var(--bg-elevated);
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .street-word.analyzing {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 14px rgba(0, 212, 255, 0.3);
+            transform: scale(1.08);
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        .street-word.candidate {
+            border-color: var(--accent-amber);
+            color: var(--accent-amber);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+            transform: scale(1.05);
+        }
+
+        .street-word.selected {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-emerald));
+            color: #fff;
+            font-weight: 700;
+            border-color: transparent;
+            box-shadow: var(--glow-green);
+            transform: scale(1.2) translateY(-16px);
+            z-index: 20;
+        }
+
+        .street-word.fading-out {
+            opacity: 0;
+            transform: scale(0.6) translateY(-30px);
+            pointer-events: none;
+        }
+
+        .street-word.hidden {
+            display: none;
+        }
+
+        /* ════════════════════════════════════════════
+           WELCOME OVERLAY
+           ════════════════════════════════════════════ */
+        .welcome-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(6, 8, 15, 0.5);
+            transition: opacity 0.6s, visibility 0.6s;
+        }
+
+        .welcome-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .welcome-card {
+            text-align: center;
+            max-width: 440px;
+            padding: 40px;
+        }
+
+        .welcome-icon {
+            font-size: 52px;
+            margin-bottom: 16px;
+        }
+
+        .welcome-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .welcome-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .welcome-hint {
+            margin-top: 24px;
+            padding: 10px 20px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            font-size: 12px;
+            color: var(--text-dim);
+            display: inline-block;
+        }
+
+        .welcome-hint .key {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        /* ════════════════════════════════════════════
+           STATUS BAR
+           ════════════════════════════════════════════ */
+        .status-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(60px);
+            z-index: 100;
+            padding: 10px 24px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+            opacity: 0;
+        }
+
+        .status-toast.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* ════════════════════════════════════════════
+           RESPONSIVE
+           ════════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto auto;
+            }
+            .sidebar {
+                grid-column: 1;
+                grid-row: 4;
+                border-left: none;
+                border-top: 1px solid var(--glass-border);
+                max-height: 200px;
+            }
+            .vocab-zone { grid-row: 3; grid-column: 1; }
+            header { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Ambient Glow Orbs -->
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+<div class="ambient-orb orb-3"></div>
+<canvas id="particle-canvas"></canvas>
+
+<!-- Header -->
+<header>
+    <div class="header-brand">
+        <div class="brand-icon">🧠</div>
+        <div class="brand-text">
+            <h1>Neural Visualizer</h1>
+            <span>Decode the LLM Black Box</span>
+        </div>
+    </div>
+
+    <div class="prompt-buttons" id="prompt-buttons">
+        <button class="prompt-btn" id="btn-statistics" onclick="startSimulation('statistics')">
+            <span>📊 What is Statistics?</span>
+        </button>
+        <button class="prompt-btn" id="btn-python" onclick="startSimulation('python')">
+            <span>🐍 What is Python?</span>
+        </button>
+        <button class="prompt-btn" id="btn-ml" onclick="startSimulation('ml')">
+            <span>🤖 What is Machine Learning?</span>
+        </button>
+        <button class="prompt-btn" id="btn-gravity" onclick="startSimulation('gravity')">
+            <span>🌌 What is Gravity?</span>
+        </button>
+    </div>
+
+    <div class="speed-control">
+        <label for="speed-select">Speed:</label>
+        <select id="speed-select">
+            <option value="1.5">Slow</option>
+            <option value="1" selected>Normal</option>
+            <option value="0.5">Fast</option>
+            <option value="0.25">Turbo</option>
+        </select>
+    </div>
+</header>
+
+<!-- Main Layout -->
+<div class="main-container">
+
+    <!-- Phase Indicator -->
+    <div class="phase-strip" id="phase-strip">
+        <div class="phase-step" data-phase="0">
+            <span class="phase-num">1</span> Tokenize
+        </div>
+        <div class="phase-connector" data-conn="0"></div>
+        <div class="phase-step" data-phase="1">
+            <span class="phase-num">2</span> Encode
+        </div>
+        <div class="phase-connector" data-conn="1"></div>
+        <div class="phase-step" data-phase="2">
+            <span class="phase-num">3</span> Attention
+        </div>
+        <div class="phase-connector" data-conn="2"></div>
+        <div class="phase-step" data-phase="3">
+            <span class="phase-num">4</span> Probability
+        </div>
+        <div class="phase-connector" data-conn="3"></div>
+        <div class="phase-step" data-phase="4">
+            <span class="phase-num">5</span> Select Token
+        </div>
+    </div>
+
+    <!-- Center: Network + Output -->
+    <div class="center-panel">
+        <!-- Output -->
+        <div class="output-zone">
+            <div class="output-label">Generated Response <span id="token-progress"></span></div>
+            <div id="output-container">
+                <span class="output-cursor" id="output-cursor"></span>
+            </div>
+        </div>
+
+        <!-- Neural Network Canvas -->
+        <div class="brain-zone">
+            <canvas id="network-canvas"></canvas>
+            <div class="math-overlay" id="math-overlay">
+                <div class="math-label" id="math-label">Softmax Probability</div>
+                <div class="math-equation" id="math-equation">P(y_i) = exp(z_i) / Σ exp(z_j)</div>
+            </div>
+
+            <!-- Welcome -->
+            <div class="welcome-overlay" id="welcome-overlay">
+                <div class="welcome-card">
+                    <div class="welcome-icon">🧠</div>
+                    <h2>Inside the AI Mind</h2>
+                    <p>Watch how a Large Language Model builds its answer one word at a time — through tokenization, neural processing, mathematical attention, and probability-based selection.</p>
+                    <div class="welcome-hint">Click a <span class="key">prompt button</span> above to begin</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar: Probability -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>Token Probabilities</h3>
+            <p>Next-token prediction scores</p>
+        </div>
+        <div class="token-counter">
+            <span class="label">Tokens</span>
+            <span class="count" id="token-count">0 / 0</span>
+        </div>
+        <div class="prob-list" id="prob-list"></div>
+        <div class="sidebar-legend">
+            <div class="legend-item"><span class="legend-dot cyan"></span> Analyzing candidate</div>
+            <div class="legend-item"><span class="legend-dot purple"></span> Math computation</div>
+            <div class="legend-item"><span class="legend-dot green"></span> Selected token</div>
+        </div>
+    </div>
+
+    <!-- Vocabulary Pool -->
+    <div class="vocab-zone">
+        <div class="vocab-label">
+            Vocabulary Pool (Token Space)
+            <span class="vocab-count" id="vocab-count">0 tokens</span>
+        </div>
+        <div id="the-street"></div>
+    </div>
+</div>
+
+<!-- Status Toast -->
+<div class="status-toast" id="status-toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+// DATA SCENARIOS
+// ══════════════════════════════════════════════════
+const data = {
+    statistics: {
+        prompt: "What is Statistics?",
+        answer: ["Statistics", "is", "the", "mathematical", "science", "of", "collecting,", "analyzing,", "and", "interpreting", "data", "to", "make", "informed", "decisions."],
+        distractors: ["apple", "quantum", "Python", "neural", "ocean", "gravity", "compile", "kernel", "gradient", "entropy", "binary", "tensor"]
+    },
+    python: {
+        prompt: "What is Python?",
+        answer: ["Python", "is", "a", "high-level,", "versatile", "programming", "language", "widely", "used", "for", "data", "science,", "AI,", "and", "web", "development."],
+        distractors: ["snake", "biology", "calculus", "compile", "hardware", "photon", "gravity", "matrix", "neuron", "algebra", "cloud", "water"]
+    },
+    ml: {
+        prompt: "What is Machine Learning?",
+        answer: ["Machine", "Learning", "is", "a", "branch", "of", "artificial", "intelligence", "where", "systems", "learn", "patterns", "from", "data", "without", "explicit", "programming."],
+        distractors: ["bicycle", "ocean", "recipe", "gravity", "painting", "melody", "glacier", "voltage", "compass", "fossil", "prism", "orbit"]
+    },
+    gravity: {
+        prompt: "What is Gravity?",
+        answer: ["Gravity", "is", "a", "fundamental", "force", "of", "nature", "that", "attracts", "objects", "with", "mass", "toward", "each", "other."],
+        distractors: ["python", "compile", "neural", "token", "syntax", "kernel", "binary", "lambda", "vector", "photon", "enzyme", "quasar"]
+    }
+};
+
+const mathFormulas = [
+    { label: "Softmax Probability", eq: "P(yᵢ) = exp(zᵢ) / Σⱼ exp(zⱼ)" },
+    { label: "Scaled Dot-Product Attention", eq: "Attn(Q,K,V) = softmax(QKᵀ / √dₖ) · V" },
+    { label: "Layer Normalization", eq: "LN(x) = γ · (x − μ) / √(σ² + ε) + β" },
+    { label: "Cross-Entropy Loss", eq: "L = −Σᵢ yᵢ · log(pᵢ)" },
+    { label: "Multi-Head Attention", eq: "MHA = Concat(head₁,...,headₕ) · Wᴼ" },
+    { label: "Feed-Forward Network", eq: "FFN(x) = max(0, xW₁ + b₁)W₂ + b₂" },
+    { label: "Positional Encoding", eq: "PE(pos,2i) = sin(pos / 10000^(2i/d))" },
+    { label: "Gradient Update", eq: "θ ← θ − α · ∇L(θ)" }
+];
+
+let isAnimating = false;
+let speedMultiplier = 1;
+
+const sleep = (ms) => new Promise(r => setTimeout(r, ms * speedMultiplier));
+
+// ══════════════════════════════════════════════════
+// PARTICLE BACKGROUND
+// ══════════════════════════════════════════════════
+const pCanvas = document.getElementById('particle-canvas');
+const pCtx = pCanvas.getContext('2d');
+let particles = [];
+
+function resizeParticleCanvas() {
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
+}
+
+function initParticles() {
+    particles = [];
+    const count = Math.floor((pCanvas.width * pCanvas.height) / 18000);
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: Math.random() * pCanvas.width,
+            y: Math.random() * pCanvas.height,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 1.5 + 0.5,
+            alpha: Math.random() * 0.4 + 0.1
+        });
+    }
+}
+
+function drawParticles() {
+    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+                pCtx.beginPath();
+                pCtx.strokeStyle = `rgba(79, 140, 255, ${0.06 * (1 - dist / 120)})`;
+                pCtx.lineWidth = 0.5;
+                pCtx.moveTo(particles[i].x, particles[i].y);
+                pCtx.lineTo(particles[j].x, particles[j].y);
+                pCtx.stroke();
+            }
+        }
+    }
+
+    // Draw particles
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = pCanvas.width;
+        if (p.x > pCanvas.width) p.x = 0;
+        if (p.y < 0) p.y = pCanvas.height;
+        if (p.y > pCanvas.height) p.y = 0;
+
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        pCtx.fillStyle = `rgba(100, 160, 255, ${p.alpha})`;
+        pCtx.fill();
+    });
+
+    requestAnimationFrame(drawParticles);
+}
+
+resizeParticleCanvas();
+initParticles();
+drawParticles();
+window.addEventListener('resize', () => { resizeParticleCanvas(); initParticles(); });
+
+// ══════════════════════════════════════════════════
+// NEURAL NETWORK (Layered Canvas)
+// ══════════════════════════════════════════════════
+const netCanvas = document.getElementById('network-canvas');
+const netCtx = netCanvas.getContext('2d');
+let networkNodes = [];
+let networkEdges = [];
+let activeNodes = new Set();
+let activeEdges = new Set();
+let networkAnimFrame;
+let signalParticles = [];
+
+function resizeNetCanvas() {
+    const rect = netCanvas.parentElement.getBoundingClientRect();
+    netCanvas.width = rect.width;
+    netCanvas.height = rect.height;
+}
+
+function buildLayeredNetwork() {
+    resizeNetCanvas();
+    const w = netCanvas.width;
+    const h = netCanvas.height;
+    networkNodes = [];
+    networkEdges = [];
+
+    const layers = [5, 8, 10, 10, 8, 5];
+    const layerX = layers.map((_, i) => (w * (i + 1)) / (layers.length + 1));
+
+    let nodeId = 0;
+    const layerNodes = [];
+
+    layers.forEach((count, li) => {
+        const nodesInLayer = [];
+        for (let ni = 0; ni < count; ni++) {
+            const y = (h * (ni + 1)) / (count + 1);
+            networkNodes.push({ id: nodeId, x: layerX[li], y, layer: li, r: 4 });
+            nodesInLayer.push(nodeId);
+            nodeId++;
+        }
+        layerNodes.push(nodesInLayer);
+    });
+
+    // Connect adjacent layers
+    for (let li = 0; li < layerNodes.length - 1; li++) {
+        for (const from of layerNodes[li]) {
+            for (const to of layerNodes[li + 1]) {
+                if (Math.random() > 0.3) {
+                    networkEdges.push({ from, to, id: `${from}-${to}` });
+                }
+            }
+        }
+    }
+}
+
+function drawNetwork() {
+    netCtx.clearRect(0, 0, netCanvas.width, netCanvas.height);
+
+    // Edges
+    networkEdges.forEach(e => {
+        const fromNode = networkNodes[e.from];
+        const toNode = networkNodes[e.to];
+        const isActive = activeEdges.has(e.id);
+
+        netCtx.beginPath();
+        netCtx.moveTo(fromNode.x, fromNode.y);
+        netCtx.lineTo(toNode.x, toNode.y);
+        netCtx.strokeStyle = isActive
+            ? 'rgba(0, 212, 255, 0.6)'
+            : 'rgba(50, 60, 90, 0.2)';
+        netCtx.lineWidth = isActive ? 2.5 : 0.8;
+        netCtx.stroke();
+    });
+
+    // Signal particles travelling along edges
+    signalParticles.forEach((sp, idx) => {
+        sp.t += sp.speed;
+        if (sp.t > 1) { signalParticles.splice(idx, 1); return; }
+        const fromN = networkNodes[sp.from];
+        const toN = networkNodes[sp.to];
+        const x = fromN.x + (toN.x - fromN.x) * sp.t;
+        const y = fromN.y + (toN.y - fromN.y) * sp.t;
+
+        netCtx.beginPath();
+        netCtx.arc(x, y, 3, 0, Math.PI * 2);
+        const gradient = netCtx.createRadialGradient(x, y, 0, x, y, 6);
+        gradient.addColorStop(0, 'rgba(0, 212, 255, 0.9)');
+        gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
+        netCtx.fillStyle = gradient;
+        netCtx.fill();
+    });
+
+    // Nodes
+    networkNodes.forEach(n => {
+        const isActive = activeNodes.has(n.id);
+        netCtx.beginPath();
+        netCtx.arc(n.x, n.y, isActive ? 6 : n.r, 0, Math.PI * 2);
+
+        if (isActive) {
+            const gradient = netCtx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 12);
+            gradient.addColorStop(0, 'rgba(0, 212, 255, 1)');
+            gradient.addColorStop(0.5, 'rgba(0, 212, 255, 0.3)');
+            gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
+            netCtx.fillStyle = gradient;
+            netCtx.fill();
+
+            netCtx.beginPath();
+            netCtx.arc(n.x, n.y, 4, 0, Math.PI * 2);
+            netCtx.fillStyle = '#00d4ff';
+            netCtx.fill();
+        } else {
+            netCtx.fillStyle = 'rgba(60, 75, 110, 0.6)';
+            netCtx.fill();
+        }
+    });
+
+    networkAnimFrame = requestAnimationFrame(drawNetwork);
+}
+
+function startNetworkPulse() {
+    // Activate random chains
+    const totalNodes = networkNodes.length;
+    const burstCount = 6;
+    for (let b = 0; b < burstCount; b++) {
+        const rId = Math.floor(Math.random() * totalNodes);
+        activeNodes.add(rId);
+        setTimeout(() => activeNodes.delete(rId), 500);
+    }
+
+    // Send signal particles along random edges
+    for (let s = 0; s < 3; s++) {
+        const edge = networkEdges[Math.floor(Math.random() * networkEdges.length)];
+        if (edge) {
+            activeEdges.add(edge.id);
+            signalParticles.push({ from: edge.from, to: edge.to, t: 0, speed: 0.03 + Math.random() * 0.03 });
+            setTimeout(() => activeEdges.delete(edge.id), 600);
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════
+function setPhase(idx) {
+    document.querySelectorAll('.phase-step').forEach((el, i) => {
+        el.classList.remove('active', 'done');
+        if (i < idx) el.classList.add('done');
+        if (i === idx) el.classList.add('active');
+    });
+    document.querySelectorAll('.phase-connector').forEach((el, i) => {
+        el.classList.remove('active', 'done');
+        if (i < idx) el.classList.add('done');
+        if (i === idx) el.classList.add('active');
+    });
+}
+
+function resetPhases() {
+    document.querySelectorAll('.phase-step').forEach(el => el.classList.remove('active', 'done'));
+    document.querySelectorAll('.phase-connector').forEach(el => el.classList.remove('active', 'done'));
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('status-toast');
+    toast.textContent = msg;
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 2500);
+}
+
+function showMath(formula) {
+    const overlay = document.getElementById('math-overlay');
+    document.getElementById('math-label').textContent = formula.label;
+    document.getElementById('math-equation').textContent = formula.eq;
+    overlay.classList.add('visible');
+}
+
+function hideMath() {
+    document.getElementById('math-overlay').classList.remove('visible');
+}
+
+function setButtons(disabled) {
+    document.querySelectorAll('.prompt-btn').forEach(btn => btn.disabled = disabled);
+}
+
+function updateProbabilities(candidates, winnerId) {
+    const list = document.getElementById('prob-list');
+    list.innerHTML = '';
+    candidates.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'prob-item' + (c.word === winnerId ? ' winner' : '');
+
+        const bar = document.createElement('div');
+        bar.className = 'prob-bar-bg';
+
+        const content = document.createElement('div');
+        content.className = 'prob-item-content';
+
+        const word = document.createElement('span');
+        word.className = 'prob-word';
+        word.textContent = c.word;
+
+        const val = document.createElement('span');
+        val.className = 'prob-value';
+        val.textContent = (c.prob * 100).toFixed(1) + '%';
+
+        content.appendChild(word);
+        content.appendChild(val);
+        item.appendChild(bar);
+        item.appendChild(content);
+        list.appendChild(item);
+
+        // Animate bar
+        requestAnimationFrame(() => {
+            bar.style.width = (c.prob * 100) + '%';
+        });
+    });
+}
+
+// ══════════════════════════════════════════════════
+// MAIN SIMULATION
+// ══════════════════════════════════════════════════
+async function startSimulation(topic) {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    speedMultiplier = parseFloat(document.getElementById('speed-select').value);
+
+    // Hide welcome
+    document.getElementById('welcome-overlay').classList.add('hidden');
+    setButtons(true);
+
+    const scenario = data[topic];
+    const outputContainer = document.getElementById('output-container');
+    const street = document.getElementById('the-street');
+    const totalTokens = scenario.answer.length;
+
+    // Reset
+    outputContainer.innerHTML = '<span class="output-cursor" id="output-cursor"></span>';
+    street.innerHTML = '';
+    document.getElementById('prob-list').innerHTML = '';
+    document.getElementById('token-count').textContent = `0 / ${totalTokens}`;
+    resetPhases();
+
+    // Build neural network
+    buildLayeredNetwork();
+    if (networkAnimFrame) cancelAnimationFrame(networkAnimFrame);
+    drawNetwork();
+
+    showToast(`🧠 Processing: "${scenario.prompt}"`);
+    await sleep(600);
+
+    // ─── PHASE 1: Tokenize ───
+    setPhase(0);
+    showToast('📦 Tokenizing vocabulary...');
+
+    let vocabPool = [...scenario.answer, ...scenario.distractors];
+    vocabPool = vocabPool.sort(() => Math.random() - 0.5);
+
+    // Stagger word appearance
+    for (let i = 0; i < vocabPool.length; i++) {
+        const el = document.createElement('div');
+        el.className = 'street-word';
+        el.textContent = vocabPool[i];
+        el.dataset.word = vocabPool[i];
+        el.style.opacity = '0';
+        el.style.transform = 'scale(0.7) translateY(10px)';
+        street.appendChild(el);
+
+        // Animate in with stagger
+        setTimeout(() => {
+            el.style.transition = 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            el.style.opacity = '1';
+            el.style.transform = 'scale(1) translateY(0)';
+        }, i * 40);
+    }
+
+    document.getElementById('vocab-count').textContent = `${vocabPool.length} tokens`;
+    await sleep(800 + vocabPool.length * 30);
+
+    // ─── PHASE 2–5: Word-by-Word Generation ───
+    for (let wi = 0; wi < scenario.answer.length; wi++) {
+        const targetWord = scenario.answer[wi];
+
+        // Phase 2: Encode (Neural network fires)
+        setPhase(1);
+        let pulseInterval = setInterval(startNetworkPulse, 120);
+        await sleep(400);
+
+        // Phase 3: Attention (Show math)
+        setPhase(2);
+        const formula = mathFormulas[Math.floor(Math.random() * mathFormulas.length)];
+        showMath(formula);
+        await sleep(500);
+
+        // Phase 4: Probability (Highlight candidates in street)
+        setPhase(3);
+        const streetElements = Array.from(document.querySelectorAll('.street-word:not(.hidden)'));
+
+        // Pick random candidates + the correct word
+        const candidateCount = Math.min(5, streetElements.length);
+        const candidateSet = new Set();
+        const correctEl = streetElements.find(el => el.dataset.word === targetWord);
+
+        // Always include the correct one
+        if (correctEl) candidateSet.add(correctEl);
+
+        while (candidateSet.size < candidateCount && candidateSet.size < streetElements.length) {
+            candidateSet.add(streetElements[Math.floor(Math.random() * streetElements.length)]);
+        }
+
+        const candidates = Array.from(candidateSet);
+
+        // Animate scanning
+        for (let c = 0; c < candidates.length; c++) {
+            candidates[c].classList.add('analyzing');
+            await sleep(150);
+            candidates[c].classList.remove('analyzing');
+            candidates[c].classList.add('candidate');
+        }
+
+        await sleep(200);
+
+        // Build probability distribution (winner gets highest)
+        let probData = candidates.map(el => {
+            const isWinner = el.dataset.word === targetWord;
+            return {
+                word: el.dataset.word,
+                prob: isWinner ? 0.55 + Math.random() * 0.3 : Math.random() * 0.12 + 0.02,
+                el
+            };
+        });
+
+        // Normalize
+        const total = probData.reduce((s, p) => s + p.prob, 0);
+        probData = probData.map(p => ({ ...p, prob: p.prob / total }));
+        probData.sort((a, b) => b.prob - a.prob);
+
+        updateProbabilities(probData, targetWord);
+        await sleep(500);
+
+        // Phase 5: Select
+        setPhase(4);
+        clearInterval(pulseInterval);
+        hideMath();
+
+        // Remove candidate highlights
+        candidates.forEach(c => c.classList.remove('candidate'));
+
+        if (correctEl) {
+            // The "jump" selection
+            correctEl.classList.add('selected');
+            await sleep(600);
+
+            // Fade out
+            correctEl.classList.remove('selected');
+            correctEl.classList.add('fading-out');
+            await sleep(350);
+            correctEl.classList.add('hidden');
+
+            // Append to output
+            const cursor = document.getElementById('output-cursor');
+            const outSpan = document.createElement('span');
+            outSpan.className = 'output-word';
+            outSpan.textContent = targetWord;
+            outputContainer.insertBefore(outSpan, cursor);
+        }
+
+        // Update token count
+        document.getElementById('token-count').textContent = `${wi + 1} / ${totalTokens}`;
+        document.getElementById('token-progress').textContent = `(${wi + 1}/${totalTokens})`;
+
+        // Update remaining vocab count
+        const remaining = document.querySelectorAll('.street-word:not(.hidden)').length;
+        document.getElementById('vocab-count').textContent = `${remaining} tokens`;
+
+        await sleep(300);
+    }
+
+    // Done!
+    // Remove cursor
+    const cursor = document.getElementById('output-cursor');
+    if (cursor) cursor.remove();
+
+    // Mark all phases done
+    document.querySelectorAll('.phase-step').forEach(el => { el.classList.remove('active'); el.classList.add('done'); });
+    document.querySelectorAll('.phase-connector').forEach(el => { el.classList.remove('active'); el.classList.add('done'); });
+
+    showToast('✅ Generation complete!');
+
+    // Stop network animation loop & clear active states
+    activeNodes.clear();
+    activeEdges.clear();
+    signalParticles.length = 0;
+
+    setButtons(false);
+    isAnimating = false;
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+window.addEventListener('resize', () => {
+    if (!isAnimating) buildLayeredNetwork();
+});
+
+buildLayeredNetwork();
+drawNetwork();
+</script>
+</body>
+</html>

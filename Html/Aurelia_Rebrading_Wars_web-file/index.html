@@ -1,0 +1,1198 @@
+<!-- 
+================================================================================
+IMAGE ASSET MANIFEST & DOWNLOAD LINKS
+================================================================================
+To use local images:
+1. Download the images from the links provided below.
+2. Save them in a folder (e.g., named "images") inside your project folder.
+3. Scroll down to the code and replace the 'src' URL with your local path (e.g., src="images/turmeric.jpg").
+
+SECTION       | DESCRIPTION           | CURRENT LINK (Unsplash/Dicebear)
+--------------------------------------------------------------------------------
+Hero          | Turmeric (Floating)   | https://images.unsplash.com/photo-1615485500704-8e99099928b3
+Hero          | Garlic (Floating)     | https://images.unsplash.com/photo-1610450919223-9366e632db2f
+Collection    | Turmeric Ghee         | https://images.unsplash.com/photo-1629196914375-f7e48f477b6d
+Collection    | Garlic Ghee           | https://images.unsplash.com/photo-1541795020-f56b5c928736
+Collection    | Brahmi Ghee           | https://images.unsplash.com/photo-1588612502268-f938d8d38698
+Process       | Farm Background       | https://images.unsplash.com/photo-1500382017468-9049fed747ef
+Traceability  | Farmer Profile        | https://images.unsplash.com/photo-1595661669862-3bdc348f95c4
+Testimonial   | User Avatar           | https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=ffdfbf
+================================================================================
+-->
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emami Sattva - Heritage Infusion Series</title>
+    
+    <!-- 1. Tailwind CSS (CDN for Dev/Prototyping) -->
+    <!-- Note: In a pure HTML setup without Node.js, the console warning about 'cdn.tailwindcss.com' is expected. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Google Fonts (Serif for Heritage vibe) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- 3. Tailwind Configuration for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Work Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        sattva: {
+                            base: '#FDFBF7',
+                            gold: '#D97706',
+                            indigo: '#1E1B4B',
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                        'spin-super-slow': 'spin 60s linear infinite',
+                        'spin-reverse': 'spinReverse 50s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'liquid-pulse': 'liquidPulse 4s ease-in-out infinite',
+                        'fade-in-up': 'fadeInUp 1s ease-out forwards',
+                        'bounce-slow': 'bounce 4s infinite',
+                    },
+                    keyframes: {
+                        spinReverse: {
+                            'from': { transform: 'translate(-50%, -50%) rotate(360deg)' },
+                            'to': { transform: 'translate(-50%, -50%) rotate(0deg)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        liquidPulse: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.02)' }
+                        },
+                        fadeInUp: {
+                            'from': { opacity: '0', transform: 'translateY(30px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for specific overrides -->
+    <style>
+        body {
+            background-color: #FDFBF7;
+            color: #44403C;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D97706;
+            border-radius: 4px;
+        }
+        /* Utility for hiding elements before scroll animation */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+        }
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden selection:bg-sattva-gold selection:text-white">
+
+    <!-- Canvas for Ghee Cursor -->
+    <canvas id="ghee-cursor" class="fixed inset-0 pointer-events-none z-[100]"></canvas>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 z-[110] bg-sattva-indigo text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 border-l-4 border-sattva-gold transition-transform duration-500 translate-x-[200%]">
+        <div class="bg-sattva-gold rounded-full p-1">
+            <i data-lucide="check-circle" class="w-4 h-4 text-white"></i>
+        </div>
+        <div>
+            <h4 class="font-serif font-bold text-sm">Success</h4>
+            <p id="toast-message" class="text-xs text-indigo-200">Action Completed</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <!-- Brand -->
+            <div onclick="window.scrollTo(0,0)" class="flex flex-col items-start group cursor-pointer">
+                <span class="text-xs tracking-[0.3em] uppercase font-bold text-sattva-gold">Emami</span>
+                <h1 class="font-serif text-3xl font-bold tracking-tight text-sattva-indigo">
+                    Sattva<span class="text-sattva-gold">.</span>
+                </h1>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-12">
+                <a href="#heritage" class="text-sm uppercase tracking-widest hover:text-sattva-gold transition-colors font-medium text-sattva-indigo">Our Heritage</a>
+                <a href="#process" class="text-sm uppercase tracking-widest hover:text-sattva-gold transition-colors font-medium text-sattva-indigo">The Process</a>
+                <a href="#collection" class="text-sm uppercase tracking-widest hover:text-sattva-gold transition-colors font-medium text-sattva-indigo">Infusions</a>
+                <a href="#benefits" class="text-sm uppercase tracking-widest hover:text-sattva-gold transition-colors font-medium text-sattva-indigo">Benefits</a>
+                <a href="#traceability" class="text-sm uppercase tracking-widest hover:text-sattva-gold transition-colors font-medium text-sattva-indigo">Traceability</a>
+                <a href="#testimonials" class="text-sm uppercase tracking-widest hover:text-sattva-gold transition-colors font-medium text-sattva-indigo">Testimonials</a>
+            </div>
+
+            <!-- Actions -->
+            <div class="hidden md:flex items-center space-x-6">
+                <button onclick="showToast('Opened Shopping Cart')" class="flex items-center space-x-2 bg-sattva-indigo text-white px-6 py-2 rounded-full hover:bg-sattva-gold transition-all duration-300 shadow-lg hover:shadow-orange-200">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span class="text-sm font-medium">Shop</span>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-sattva-indigo" onclick="toggleMenu()">
+                <i data-lucide="menu" class="w-7 h-7"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-[#FDFBF7] border-b border-stone-200 p-6 flex-col space-y-4 shadow-xl">
+            <a href="#heritage" class="text-lg font-serif text-sattva-indigo border-b border-stone-100 pb-2">Our Heritage</a>
+            <a href="#process" class="text-lg font-serif text-sattva-indigo border-b border-stone-100 pb-2">The Process</a>
+            <a href="#collection" class="text-lg font-serif text-sattva-indigo border-b border-stone-100 pb-2">Infusions</a>
+            <a href="#benefits" class="text-lg font-serif text-sattva-indigo border-b border-stone-100 pb-2">Benefits</a>
+            <a href="#traceability" class="text-lg font-serif text-sattva-indigo border-b border-stone-100 pb-2">Traceability</a>
+            <a href="#testimonials" class="text-lg font-serif text-sattva-indigo border-b border-stone-100 pb-2">Testimonials</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <!-- Background Rings -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vh] h-[120vh] border border-sattva-gold/10 rounded-full animate-spin-super-slow pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vh] h-[150vh] border border-sattva-gold/5 rounded-full animate-spin-reverse pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 w-full grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <!-- Text -->
+            <div class="space-y-8 animate-fade-in-up">
+                <div class="inline-flex items-center space-x-2 bg-amber-50 text-sattva-gold px-6 py-2 rounded-full border border-sattva-gold/20 shadow-sm">
+                    <i data-lucide="sun" class="w-3 h-3 animate-spin-slow"></i>
+                    <span class="text-xs font-bold tracking-widest uppercase">The Heritage Infusion Series</span>
+                </div>
+
+                <h2 class="font-serif text-6xl md:text-7xl lg:text-8xl leading-[0.9] text-sattva-indigo">
+                    Taste the <br />
+                    <span class="italic gradient-text relative">
+                        Wisdom
+                        <svg class="absolute w-full h-3 -bottom-1 left-0 text-sattva-gold/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+                            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
+                        </svg>
+                    </span> of India.
+                </h2>
+
+                <p class="text-lg md:text-xl text-stone-600 max-w-md leading-relaxed">
+                    We don't just make ghee; we preserve Prana. Experience the ancient Bilona method, infused with the purity of Ayurvedic botanicals.
+                </p>
+
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+                    <a href="#collection" class="bg-sattva-indigo text-white px-8 py-4 rounded-full text-lg hover:bg-sattva-gold transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 btn-ripple">
+                        Discover the Collection
+                    </a>
+                    <a href="#process" class="flex items-center justify-center space-x-2 px-8 py-4 rounded-full border border-stone-300 hover:border-sattva-gold hover:text-sattva-gold transition-all bg-white/50 backdrop-blur-sm group hover:bg-sattva-gold hover:text-white transform hover:scale-105 btn-ripple">
+                        <span class="font-medium">Watch the Process</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Visual -->
+            <div class="relative h-[500px] w-full flex justify-center items-center">
+                <!-- Jar -->
+                <div class="relative z-20 w-64 h-80 transition-transform duration-500 hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 rounded-t-full rounded-b-[3rem] shadow-2xl animate-liquid-pulse"></div>
+                    <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-t-full rounded-b-[3rem] border-4 border-white/20 backdrop-blur-[2px]"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-6 z-10">
+                        <p class="font-serif text-3xl italic mb-2 drop-shadow-md">Sattva</p>
+                        <p class="text-xs tracking-[0.3em] uppercase opacity-90 font-medium">A2 Bilona Ghee</p>
+                        <div class="mt-8 w-12 h-1 bg-white/40 mx-auto rounded-full"></div>
+                    </div>
+                </div>
+
+                <!-- Floating Ingredient: Turmeric -->
+                <div class="absolute top-20 right-10 w-24 h-24 bg-white shadow-xl rounded-2xl flex items-center justify-center animate-bounce-slow delay-100 z-30 overflow-hidden border-2 border-white enhanced-float">
+                    <!-- [IMAGE UPDATE]: Hero Section Turmeric Ingredient -->
+                    <img src="images/Turmeric.webp" class="w-full h-full object-cover opacity-90" alt="Turmeric">
+                </div>
+                <!-- Floating Ingredient: Garlic -->
+                <div class="absolute bottom-20 left-10 w-28 h-28 bg-white shadow-xl rounded-2xl flex items-center justify-center animate-bounce-slow delay-300 z-30 overflow-hidden border-2 border-white enhanced-float" style="animation-delay: 2s;">
+                    <!-- [IMAGE UPDATE]: Hero Section Garlic Ingredient -->
+                    <img src="images/Garlic.webp" class="w-full h-full object-cover opacity-90" alt="Garlic">
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce text-stone-400">
+            <span class="text-xs uppercase tracking-widest mb-2">The Journey</span>
+            <i data-lucide="chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Our Heritage Section -->
+    <section id="heritage" class="py-32 bg-gradient-to-br from-amber-50 to-stone-50 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-5">
+            <div class="absolute top-20 left-10 w-32 h-32 border border-sattva-gold rounded-full animate-spin-slow"></div>
+            <div class="absolute bottom-20 right-10 w-24 h-24 border border-sattva-indigo rounded-full animate-spin-reverse"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-20 reveal-on-scroll">
+                <h3 class="text-sattva-gold font-bold tracking-widest uppercase text-sm mb-4">Our Heritage</h3>
+                <h2 class="font-serif text-5xl text-sattva-indigo mb-6">Rooted in Tradition</h2>
+                <p class="text-stone-500 max-w-3xl mx-auto text-lg leading-relaxed">
+                    For over 5000 years, ghee has been the cornerstone of Indian cuisine and Ayurveda. 
+                    Emami Sattva revives this ancient wisdom, combining traditional Bilona method with modern purity standards.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-16 items-center mb-20">
+                <div class="space-y-8 reveal-on-scroll">
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-stone-100">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="bg-sattva-gold p-3 rounded-full">
+                                <i data-lucide="crown" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h4 class="font-serif text-2xl text-sattva-indigo">The Golden Elixir</h4>
+                        </div>
+                        <p class="text-stone-600 leading-relaxed">
+                            In Vedic texts, ghee is called "Ghrita" - the clarified essence that nourishes both body and soul. 
+                            Our ancestors knew what modern science is just discovering: ghee is nature's perfect fat.
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-stone-100">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="bg-sattva-indigo p-3 rounded-full">
+                                <i data-lucide="leaf" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h4 class="font-serif text-2xl text-sattva-indigo">Ayurvedic Wisdom</h4>
+                        </div>
+                        <p class="text-stone-600 leading-relaxed">
+                            Ayurveda considers ghee as the best carrier for herbs because it crosses the blood-brain barrier. 
+                            Our infusions are designed to maximize the therapeutic benefits of each botanical.
+                        </p>
+                    </div>
+                </div>
+                <div class="reveal-on-scroll">
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-stone-100">
+                        <h4 class="font-serif text-2xl text-sattva-indigo mb-6">Why A2 Ghee Matters</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <i data-lucide="check-circle" class="text-green-500 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <p class="font-medium text-stone-800">Easier Digestion</p>
+                                    <p class="text-stone-600 text-sm">A2 protein is gentler on the digestive system compared to A1.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i data-lucide="check-circle" class="text-green-500 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <p class="font-medium text-stone-800">Higher Nutrient Absorption</p>
+                                    <p class="text-stone-600 text-sm">Contains more vitamins A, D, E, and K than regular ghee.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i data-lucide="check-circle" class="text-green-500 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <p class="font-medium text-stone-800">Anti-Inflammatory</p>
+                                    <p class="text-stone-600 text-sm">Rich in butyrate, which reduces inflammation in the gut.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i data-lucide="check-circle" class="text-green-500 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <p class="font-medium text-stone-800">Sustainable Farming</p>
+                                    <p class="text-stone-600 text-sm">Our Gir cows graze freely on natural pastures, ensuring ethical sourcing.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center reveal-on-scroll">
+                <div class="inline-flex items-center space-x-2 bg-sattva-indigo text-white px-8 py-4 rounded-full hover:bg-sattva-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer btn-ripple" onclick="testModal()">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    <span class="font-medium">Test Modal (Simple)</span>
+                </div>
+                <br><br>
+                <div class="inline-flex items-center space-x-2 bg-sattva-indigo text-white px-8 py-4 rounded-full hover:bg-sattva-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer btn-ripple" onclick="openAyurvedaModal()">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    <span class="font-medium">Learn More About Ayurveda</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collection Section -->
+    <section id="collection" class="py-32 bg-white relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 reveal-on-scroll">
+                <h3 class="text-sattva-gold font-bold tracking-widest uppercase text-sm mb-4">The Collection</h3>
+                <h2 class="font-serif text-5xl text-sattva-indigo mb-6">Heritage Infusion Series</h2>
+                <p class="text-stone-500 max-w-2xl mx-auto">
+                    We bridge the gap between ancestral wisdom and modern wellness. 
+                    Our A2 Ghee is slow-churned and infused with whole botanicals.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1: Turmeric -->
+                <div class="group relative h-[450px] rounded-3xl bg-amber-50 border border-transparent hover:border-stone-200 transition-all duration-500 hover:shadow-2xl cursor-pointer overflow-hidden flex flex-col reveal-on-scroll hover:scale-[1.02] transform transition-transform">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0">
+                        <!-- [IMAGE UPDATE]: Turmeric Ghee Product Image -->
+                        <img src="images/TurmericGhee.jpg" class="w-full h-full object-cover opacity-20 transform scale-125 group-hover:scale-100 transition-transform duration-1000" alt="Turmeric Ghee">
+                    </div>
+                    <div class="absolute top-0 right-0 p-6 z-10 transition-transform duration-500 transform group-hover:rotate-12 group-hover:scale-110">
+                        <div class="bg-white p-3 rounded-full shadow-md group-hover:bg-sattva-gold transition-colors">
+                            <i data-lucide="sun" class="text-amber-500 w-8 h-8 group-hover:text-white transition-colors"></i>
+                        </div>
+                    </div>
+                    <div class="relative z-10 mt-auto p-8 bg-gradient-to-t from-white/90 via-white/50 to-transparent h-full flex flex-col justify-end">
+                        <h3 class="font-serif text-3xl text-amber-600 mb-3 group-hover:translate-x-1 transition-transform leading-tight">Turmeric Golden Ghee</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed mb-6 font-medium">Infused with Lakadong Turmeric for immunity.</p>
+                        <div class="flex items-center justify-between">
+                            <button onclick="showToast('Added Turmeric Ghee to Cart')" class="bg-sattva-indigo text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-sattva-gold shadow-lg btn-ripple">Add to Cart</button>
+                            <span class="text-sattva-indigo font-bold text-lg">₹899</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Garlic -->
+                <div class="group relative h-[450px] rounded-3xl bg-stone-50 border border-transparent hover:border-stone-200 transition-all duration-500 hover:shadow-2xl cursor-pointer overflow-hidden flex flex-col reveal-on-scroll hover:scale-[1.02] transform transition-transform" style="transition-delay: 100ms;">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0">
+                        <!-- [IMAGE UPDATE]: Garlic Ghee Product Image -->
+                        <img src="images/GarlicGhee.webp" class="w-full h-full object-cover opacity-20 transform scale-125 group-hover:scale-100 transition-transform duration-1000" alt="Garlic Ghee">
+                    </div>
+                    <div class="absolute top-0 right-0 p-6 z-10 transition-transform duration-500 transform group-hover:rotate-12 group-hover:scale-110">
+                        <div class="bg-white p-3 rounded-full shadow-md group-hover:bg-sattva-gold transition-colors">
+                            <i data-lucide="heart" class="text-red-400 w-8 h-8 group-hover:text-white transition-colors"></i>
+                        </div>
+                    </div>
+                    <div class="relative z-10 mt-auto p-8 bg-gradient-to-t from-white/90 via-white/50 to-transparent h-full flex flex-col justify-end">
+                        <h3 class="font-serif text-3xl text-stone-600 mb-3 group-hover:translate-x-1 transition-transform leading-tight">Garlic Heart Ghee</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed mb-6 font-medium">Slow-roasted garlic for heart health & digestion.</p>
+                        <div class="flex items-center justify-between">
+                            <button onclick="showToast('Added Garlic Ghee to Cart')" class="bg-sattva-indigo text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-sattva-gold shadow-lg btn-ripple">Add to Cart</button>
+                            <span class="text-sattva-indigo font-bold text-lg">₹899</span>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Card 3: Brahmi -->
+                 <div class="group relative h-[450px] rounded-3xl bg-emerald-50 border border-transparent hover:border-stone-200 transition-all duration-500 hover:shadow-2xl cursor-pointer overflow-hidden flex flex-col reveal-on-scroll hover:scale-[1.02] transform transition-transform" style="transition-delay: 200ms;">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0">
+                        <!-- [IMAGE UPDATE]: Brahmi Ghee Product Image -->
+                        <img src="images/BrahmiGhee.webp" class="w-full h-full object-cover opacity-20 transform scale-125 group-hover:scale-100 transition-transform duration-1000" alt="Brahmi Ghee">
+                    </div>
+                    <div class="absolute top-0 right-0 p-6 z-10 transition-transform duration-500 transform group-hover:rotate-12 group-hover:scale-110">
+                        <div class="bg-white p-3 rounded-full shadow-md group-hover:bg-sattva-gold transition-colors">
+                            <i data-lucide="leaf" class="text-emerald-600 w-8 h-8 group-hover:text-white transition-colors"></i>
+                        </div>
+                    </div>
+                    <div class="relative z-10 mt-auto p-8 bg-gradient-to-t from-white/90 via-white/50 to-transparent h-full flex flex-col justify-end">
+                        <h3 class="font-serif text-3xl text-emerald-700 mb-3 group-hover:translate-x-1 transition-transform leading-tight">Brahmi Mind Ghee</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed mb-6 font-medium">Enriched with Brahmi leaves for focus and memory.</p>
+                        <div class="flex items-center justify-between">
+                            <button onclick="showToast('Added Brahmi Ghee to Cart')" class="bg-sattva-indigo text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-sattva-gold shadow-lg btn-ripple">Add to Cart</button>
+                            <span class="text-sattva-indigo font-bold text-lg">₹899</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Ashwagandha -->
+                <div class="group relative h-[450px] rounded-3xl bg-purple-50 border border-transparent hover:border-stone-200 transition-all duration-500 hover:shadow-2xl cursor-pointer overflow-hidden flex flex-col reveal-on-scroll hover:scale-[1.02] transform transition-transform" style="transition-delay: 300ms;">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0">
+                        <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover opacity-20 transform scale-125 group-hover:scale-100 transition-transform duration-1000" alt="Ashwagandha Ghee">
+                    </div>
+                    <div class="absolute top-0 right-0 p-6 z-10 transition-transform duration-500 transform group-hover:rotate-12 group-hover:scale-110">
+                        <div class="bg-white p-3 rounded-full shadow-md group-hover:bg-sattva-gold transition-colors">
+                            <i data-lucide="zap" class="text-purple-600 w-8 h-8 group-hover:text-white transition-colors"></i>
+                        </div>
+                    </div>
+                    <div class="relative z-10 mt-auto p-8 bg-gradient-to-t from-white/90 via-white/50 to-transparent h-full flex flex-col justify-end">
+                        <h3 class="font-serif text-3xl text-purple-700 mb-3 group-hover:translate-x-1 transition-transform leading-tight">Ashwagandha Vital Ghee</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed mb-6 font-medium">Adaptogenic root for stress relief and vitality.</p>
+                        <div class="flex items-center justify-between">
+                            <button onclick="showToast('Added Ashwagandha Ghee to Cart')" class="bg-sattva-indigo text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-sattva-gold shadow-lg btn-ripple">Add to Cart</button>
+                            <span class="text-sattva-indigo font-bold text-lg">₹949</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Neem -->
+                <div class="group relative h-[450px] rounded-3xl bg-green-50 border border-transparent hover:border-stone-200 transition-all duration-500 hover:shadow-2xl cursor-pointer overflow-hidden flex flex-col reveal-on-scroll hover:scale-[1.02] transform transition-transform" style="transition-delay: 400ms;">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0">
+                        <img src="images/NeemGhee.webp" class="w-full h-full object-cover opacity-20 transform scale-125 group-hover:scale-100 transition-transform duration-1000" alt="Neem Ghee">
+                    </div>
+                    <div class="absolute top-0 right-0 p-6 z-10 transition-transform duration-500 transform group-hover:rotate-12 group-hover:scale-110">
+                        <div class="bg-white p-3 rounded-full shadow-md group-hover:bg-sattva-gold transition-colors">
+                            <i data-lucide="shield" class="text-green-600 w-8 h-8 group-hover:text-white transition-colors"></i>
+                        </div>
+                    </div>
+                    <div class="relative z-10 mt-auto p-8 bg-gradient-to-t from-white/90 via-white/50 to-transparent h-full flex flex-col justify-end">
+                        <h3 class="font-serif text-3xl text-green-700 mb-3 group-hover:translate-x-1 transition-transform leading-tight">Neem Pure Ghee</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed mb-6 font-medium">Bitter neem for detoxification and skin health.</p>
+                        <div class="flex items-center justify-between">
+                            <button onclick="showToast('Added Neem Ghee to Cart')" class="bg-sattva-indigo text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-sattva-gold shadow-lg btn-ripple">Add to Cart</button>
+                            <span class="text-sattva-indigo font-bold text-lg">₹899</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="py-32 bg-sattva-indigo text-white overflow-hidden relative">
+        <div class="absolute inset-0 opacity-10">
+            <!-- [IMAGE UPDATE]: Process/Farm Background Image -->
+            <img src="images/FramBackground.jpg" class="w-full h-full object-cover" alt="Farm Background">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-b from-sattva-indigo via-transparent to-sattva-indigo opacity-90"></div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row gap-16 items-start">
+                <!-- Sticky Text -->
+                <div class="md:w-1/2 md:sticky md:top-32 reveal-on-scroll">
+                    <h2 class="font-serif text-5xl mb-8 leading-tight">
+                        From Soil to <br/><span class="text-sattva-gold">Soul.</span>
+                    </h2>
+                    <p class="text-indigo-200 text-lg mb-8 leading-relaxed">
+                        Most ghee today is industrial oil. Ours is a ritual. We strictly follow the 5-step Vedic Bilona method to ensure that every jar contains not just fat, but the essence of Indian tradition.
+                    </p>
+                    <div class="flex flex-col space-y-6">
+                        <div class="flex items-center space-x-4 p-4 bg-indigo-900/30 rounded-xl backdrop-blur-sm border border-indigo-500/20">
+                           <i data-lucide="check-circle" class="text-sattva-gold"></i>
+                           <span>Free-grazing Gir Cows (A2 Milk)</span>
+                        </div>
+                        <div class="flex items-center space-x-4 p-4 bg-indigo-900/30 rounded-xl backdrop-blur-sm border border-indigo-500/20">
+                           <i data-lucide="check-circle" class="text-sattva-gold"></i>
+                           <span>Curd-based churning (Not Cream)</span>
+                        </div>
+                        <div class="flex items-center space-x-4 p-4 bg-indigo-900/30 rounded-xl backdrop-blur-sm border border-indigo-500/20">
+                           <i data-lucide="check-circle" class="text-sattva-gold"></i>
+                           <span>Hand-churned in Earthen Pots</span>
+                        </div>
+                     </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="md:w-1/2 w-full space-y-12 pl-4 md:pl-0 border-l border-indigo-800 md:border-none">
+                    <!-- Step 1 -->
+                    <div class="flex gap-6 reveal-on-scroll group">
+                        <div class="flex-shrink-0 relative">
+                            <div class="w-16 h-16 rounded-full border border-indigo-700 bg-sattva-indigo flex items-center justify-center text-xl font-serif text-sattva-gold z-10 relative group-hover:bg-sattva-gold group-hover:text-white transition-colors duration-500 shadow-lg">01</div>
+                            <div class="absolute top-16 left-1/2 w-px h-24 bg-indigo-800 -translate-x-1/2"></div>
+                        </div>
+                        <div class="pb-12">
+                            <h4 class="text-xl font-medium mb-2 text-indigo-50 group-hover:text-sattva-gold transition-colors">The Source</h4>
+                            <p class="text-indigo-300 text-sm leading-relaxed max-w-sm">Milk is collected from free-grazing Gir Cows at dawn.</p>
+                        </div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="flex gap-6 reveal-on-scroll group" style="transition-delay: 100ms;">
+                        <div class="flex-shrink-0 relative">
+                            <div class="w-16 h-16 rounded-full border border-indigo-700 bg-sattva-indigo flex items-center justify-center text-xl font-serif text-sattva-gold z-10 relative group-hover:bg-sattva-gold group-hover:text-white transition-colors duration-500 shadow-lg">02</div>
+                            <div class="absolute top-16 left-1/2 w-px h-24 bg-indigo-800 -translate-x-1/2"></div>
+                        </div>
+                        <div class="pb-12">
+                            <h4 class="text-xl font-medium mb-2 text-indigo-50 group-hover:text-sattva-gold transition-colors">The Culture</h4>
+                            <p class="text-indigo-300 text-sm leading-relaxed max-w-sm">Milk is boiled in earthen pots and set to curd overnight.</p>
+                        </div>
+                    </div>
+                     <!-- Step 3 -->
+                     <div class="flex gap-6 reveal-on-scroll group" style="transition-delay: 200ms;">
+                        <div class="flex-shrink-0 relative">
+                            <div class="w-16 h-16 rounded-full border border-indigo-700 bg-sattva-indigo flex items-center justify-center text-xl font-serif text-sattva-gold z-10 relative group-hover:bg-sattva-gold group-hover:text-white transition-colors duration-500 shadow-lg">03</div>
+                            <div class="absolute top-16 left-1/2 w-px h-24 bg-indigo-800 -translate-x-1/2"></div>
+                        </div>
+                        <div class="pb-12">
+                            <h4 class="text-xl font-medium mb-2 text-indigo-50 group-hover:text-sattva-gold transition-colors">The Churn</h4>
+                            <p class="text-indigo-300 text-sm leading-relaxed max-w-sm">The curd is hand-churned (Bilona) to separate the makkhan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Traceability -->
+    <section id="traceability" class="py-24 bg-[#FDFBF7] relative">
+        <div class="max-w-5xl mx-auto px-6 reveal-on-scroll">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-stone-100 flex flex-col md:flex-row group hover:shadow-3xl transition-shadow duration-500">
+                <div class="md:w-2/5 bg-stone-200 relative min-h-[300px] overflow-hidden">
+                    <!-- [IMAGE UPDATE]: Farmer Profile Image -->
+                    <img src="images/FarmerProfile.png" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Farmer Ram Kaka">
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6">
+                        <p class="text-white font-serif text-xl">Ram Kaka</p>
+                        <p class="text-stone-300 text-sm">Head Herdsman, Nashik</p>
+                    </div>
+                </div>
+                <div class="md:w-3/5 p-12 flex flex-col justify-center">
+                    <div class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase mb-4 w-max">Transparency First</div>
+                    <h3 class="font-serif text-3xl text-sattva-indigo mb-4">Meet the hands behind your jar.</h3>
+                    <p class="text-stone-500 mb-8">Every batch tells a story. Enter the batch code found on the bottom of your jar to see the milking date, the farmer, and the lab report.</p>
+                    <div class="flex space-x-2">
+                        <div class="relative flex-grow">
+                            <input type="text" placeholder="Enter Batch Code (e.g., A2-409)" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 focus:outline-none focus:border-sattva-gold transition-colors">
+                            <i data-lucide="search" class="absolute right-3 top-3.5 text-stone-400 w-5 h-5"></i>
+                        </div>
+                        <button onclick="showToast('Tracing Batch A2-409... Found!')" class="bg-sattva-indigo text-white px-6 rounded-lg font-medium hover:bg-sattva-gold transition-colors shadow-lg">Trace</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20 text-center px-6 bg-amber-50/50 reveal-on-scroll">
+        <div class="max-w-3xl mx-auto">
+            <div class="flex justify-center space-x-1 mb-6">
+                <i data-lucide="star" class="fill-sattva-gold text-sattva-gold w-6 h-6"></i>
+                <i data-lucide="star" class="fill-sattva-gold text-sattva-gold w-6 h-6"></i>
+                <i data-lucide="star" class="fill-sattva-gold text-sattva-gold w-6 h-6"></i>
+                <i data-lucide="star" class="fill-sattva-gold text-sattva-gold w-6 h-6"></i>
+                <i data-lucide="star" class="fill-sattva-gold text-sattva-gold w-6 h-6"></i>
+            </div>
+            <h2 class="font-serif text-3xl md:text-4xl italic text-sattva-indigo leading-snug mb-8">
+                "Finally, a ghee that tastes like my grandmother's kitchen. The turmeric infusion is subtle yet deeply comforting. Emami Sattva has brought purity back."
+            </h2>
+            <div class="flex items-center justify-center space-x-4">
+                <div class="w-12 h-12 bg-stone-200 rounded-full overflow-hidden border-2 border-white shadow-md">
+                    <!-- [IMAGE UPDATE]: Testimonial Avatar Image -->
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=ffdfbf" alt="User">
+                </div>
+                <div class="text-left">
+                    <p class="font-bold text-sattva-indigo">Priya S.</p>
+                    <p class="text-xs text-stone-500 uppercase tracking-widest">Mumbai, India</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="py-32 bg-white relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 reveal-on-scroll">
+                <h3 class="text-sattva-gold font-bold tracking-widest uppercase text-sm mb-4">Why Choose Sattva</h3>
+                <h2 class="font-serif text-5xl text-sattva-indigo mb-6">Pure, Potent, Prana-Rich</h2>
+                <p class="text-stone-500 max-w-2xl mx-auto text-lg leading-relaxed">
+                    Every jar of Emami Sattva ghee is crafted with uncompromising standards, 
+                    ensuring you get the most nutritious and therapeutic ghee possible.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Benefit 1 -->
+                <div class="text-center reveal-on-scroll">
+                    <div class="bg-sattva-gold p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center magnetic">
+                        <i data-lucide="shield-check" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h4 class="font-serif text-xl text-sattva-indigo mb-3">100% Pure A2 Ghee</h4>
+                    <p class="text-stone-600 text-sm leading-relaxed">Sourced exclusively from Gir cows, free from A1 protein and artificial additives.</p>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="text-center reveal-on-scroll" style="transition-delay: 100ms;">
+                    <div class="bg-sattva-indigo p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center magnetic">
+                        <i data-lucide="leaf" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h4 class="font-serif text-xl text-sattva-indigo mb-3">Ayurvedic Infusions</h4>
+                    <p class="text-stone-600 text-sm leading-relaxed">Whole botanicals infused using traditional methods to maximize therapeutic benefits.</p>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="text-center reveal-on-scroll" style="transition-delay: 200ms;">
+                    <div class="bg-emerald-500 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center magnetic">
+                        <i data-lucide="search" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h4 class="font-serif text-xl text-sattva-indigo mb-3">Full Traceability</h4>
+                    <p class="text-stone-600 text-sm leading-relaxed">Track every batch from farm to jar with our unique batch code system.</p>
+                </div>
+
+                <!-- Benefit 4 -->
+                <div class="text-center reveal-on-scroll" style="transition-delay: 300ms;">
+                    <div class="bg-amber-500 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center magnetic">
+                        <i data-lucide="award" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h4 class="font-serif text-xl text-sattva-indigo mb-3">Lab Tested</h4>
+                    <p class="text-stone-600 text-sm leading-relaxed">Every batch undergoes rigorous testing for purity, contaminants, and nutritional content.</p>
+                </div>
+            </div>
+
+            <div class="mt-20 text-center reveal-on-scroll">
+                <div class="bg-gradient-to-r from-sattva-indigo to-sattva-gold p-8 rounded-3xl text-white">
+                    <h3 class="font-serif text-3xl mb-4">Ready to Experience the Difference?</h3>
+                    <p class="text-indigo-100 mb-6 max-w-2xl mx-auto">
+                        Join thousands of families who have rediscovered the magic of pure, traditional ghee.
+                    </p>
+                    <a href="#collection" class="inline-flex items-center space-x-2 bg-white text-sattva-indigo px-8 py-4 rounded-full font-bold hover:bg-sattva-gold hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 btn-ripple">
+                        <span>Shop the Collection</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-sattva-indigo text-white pt-20 pb-10 border-t border-indigo-900">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-16">
+            <div>
+                <h2 class="font-serif text-2xl font-bold mb-6">Sattva.</h2>
+                <p class="text-indigo-200 text-sm leading-relaxed mb-6">A tribute to the Golden Bird. Rediscovering the sattvic way of life through pure, ethically sourced ingredients.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="bg-indigo-800 p-2 rounded-full hover:bg-sattva-gold transition-colors">
+                        <i data-lucide="facebook" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="bg-indigo-800 p-2 rounded-full hover:bg-sattva-gold transition-colors">
+                        <i data-lucide="instagram" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="bg-indigo-800 p-2 rounded-full hover:bg-sattva-gold transition-colors">
+                        <i data-lucide="twitter" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="bg-indigo-800 p-2 rounded-full hover:bg-sattva-gold transition-colors">
+                        <i data-lucide="youtube" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-sattva-gold font-bold text-xs uppercase tracking-widest mb-6">Shop</h4>
+                <ul class="space-y-3 text-indigo-100 text-sm">
+                    <li><a href="#collection" class="hover:text-white transition-colors">All Products</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Turmeric Infusion</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Garlic Infusion</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Brahmi Infusion</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Gift Boxes</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sattva-gold font-bold text-xs uppercase tracking-widest mb-6">Learn</h4>
+                <ul class="space-y-3 text-indigo-100 text-sm">
+                    <li><a href="#heritage" class="hover:text-white transition-colors">Our Heritage</a></li>
+                    <li><a href="#process" class="hover:text-white transition-colors">The Bilona Method</a></li>
+                    <li><a href="#traceability" class="hover:text-white transition-colors">Traceability</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Ayurveda Guide</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sattva-gold font-bold text-xs uppercase tracking-widest mb-6">Contact</h4>
+                <ul class="space-y-3 text-indigo-100 text-sm mb-6">
+                    <li class="flex items-center space-x-2">
+                        <i data-lucide="phone" class="w-4 h-4 text-sattva-gold"></i>
+                        <span>+91 1800-XXX-XXXX</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <i data-lucide="mail" class="w-4 h-4 text-sattva-gold"></i>
+                        <span>hello@sattva.com</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-sattva-gold"></i>
+                        <span>Mumbai, India</span>
+                    </li>
+                </ul>
+                <h5 class="text-sattva-gold font-bold text-xs uppercase tracking-widest mb-3">Newsletter</h5>
+                <div class="flex border-b border-indigo-700 pb-2">
+                    <input type="email" placeholder="Email Address" class="bg-transparent w-full outline-none text-white placeholder-indigo-500 text-sm">
+                    <button class="text-sattva-gold font-bold text-sm uppercase">Join</button>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-indigo-900 pt-8">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-indigo-300 text-sm">© 2024 Emami Sattva. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-indigo-300 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-indigo-300 hover:text-white text-sm transition-colors">Terms of Service</a>
+                    <a href="#" class="text-indigo-300 hover:text-white text-sm transition-colors">Shipping Info</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 4. Lucide Icons Script -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // --- Logic: Navbar Scroll Effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-[#FDFBF7]/95', 'backdrop-blur-md', 'shadow-sm', 'py-3');
+                navbar.classList.remove('py-6');
+            } else {
+                navbar.classList.remove('bg-[#FDFBF7]/95', 'backdrop-blur-md', 'shadow-sm', 'py-3');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        // --- Logic: Mobile Menu ---
+        const mobileMenu = document.getElementById('mobile-menu');
+        function toggleMenu() {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        }
+
+        // --- Logic: Toast Notification ---
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        function showToast(msg) {
+            toastMessage.textContent = msg;
+            toast.classList.remove('translate-x-[200%]');
+            setTimeout(() => {
+                toast.classList.add('translate-x-[200%]');
+            }, 3000);
+        }
+
+        // --- Logic: Scroll Animations (Intersection Observer) ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+
+        // --- Logic: Ghee Cursor (Canvas) ---
+        const canvas = document.getElementById('ghee-cursor');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        window.addEventListener('mousemove', (e) => {
+            // Create particles
+            for(let i=0; i<2; i++) {
+                particles.push({
+                    x: e.clientX + (Math.random() - 0.5) * 10,
+                    y: e.clientY + (Math.random() - 0.5) * 10,
+                    vx: (Math.random() - 0.5) * 1,
+                    vy: Math.random() * 2 + 1,
+                    life: 1,
+                    color: Math.random() > 0.5 ? '#D97706' : '#FCD34D',
+                    size: Math.random() * 3 + 1
+                });
+            }
+        });
+
+        function animateCursor() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.02;
+                p.size *= 0.95;
+
+                if(p.life <= 0) {
+                    particles.splice(index, 1);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life;
+                    ctx.fill();
+                }
+            });
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animateCursor);
+        }
+        // --- Logic: Ayurveda Modal ---
+        function testModal() {
+            alert('Modal test - JavaScript is working!');
+            const modal = document.getElementById('ayurveda-modal');
+            if (modal) {
+                modal.style.display = 'block';
+                alert('Modal found and shown!');
+            } else {
+                alert('Modal not found!');
+            }
+        }
+
+        function openAyurvedaModal() {
+            console.log('Opening Ayurveda modal...');
+            const modal = document.getElementById('ayurveda-modal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('Modal opened successfully');
+            } else {
+                console.error('Modal element not found!');
+            }
+        }
+
+        function closeAyurvedaModal() {
+            console.log('Closing Ayurveda modal...');
+            const modal = document.getElementById('ayurveda-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                console.log('Modal closed successfully');
+            } else {
+                console.error('Modal element not found!');
+            }
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAyurvedaModal();
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('ayurveda-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'ayurveda-modal') {
+                closeAyurvedaModal();
+            }
+        });
+
+        // --- Logic: Enhanced Button Effects ---
+        function addButtonEffects() {
+            // Add ripple effect to all buttons
+            document.querySelectorAll('button, .btn-ripple').forEach(btn => {
+                if (!btn.classList.contains('btn-ripple')) {
+                    btn.classList.add('btn-ripple');
+                }
+            });
+
+            // Enhanced cart button functionality
+            document.querySelectorAll('button[onclick*="showToast"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const originalText = this.innerHTML;
+                    this.classList.add('btn-loading');
+                    this.disabled = true;
+
+                    setTimeout(() => {
+                        this.classList.remove('btn-loading');
+                        this.disabled = false;
+                        this.innerHTML = originalText;
+                    }, 1500);
+                });
+            });
+        }
+
+        // --- Logic: Enhanced Animations ---
+        function addEnhancedAnimations() {
+            // Add floating particles to hero section
+            const heroSection = document.getElementById('home');
+            for (let i = 0; i < 5; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'absolute w-2 h-2 bg-sattva-gold/30 rounded-full float-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                heroSection.appendChild(particle);
+            }
+
+            // Add glow effect to CTA buttons
+            document.querySelectorAll('.bg-sattva-indigo, .bg-sattva-gold').forEach(el => {
+                if (el.tagName === 'BUTTON' || el.tagName === 'A') {
+                    el.classList.add('pulse-glow');
+                }
+            });
+
+            // Enhanced scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            if (entry.target.classList.contains('slide-in-left')) {
+                                entry.target.classList.add('slide-in-left');
+                            } else if (entry.target.classList.contains('slide-in-right')) {
+                                entry.target.classList.add('slide-in-right');
+                            } else {
+                                entry.target.classList.add('is-visible');
+                            }
+                        }, index * 100);
+                    }
+                });
+            }, observerOptions);
+
+            // Add slide animations to specific elements
+            document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+
+            // Add slide-in effects to benefit cards
+            document.querySelectorAll('#benefits .grid > div:nth-child(odd)').forEach(el => {
+                el.classList.add('slide-in-left');
+                observer.observe(el);
+            });
+            document.querySelectorAll('#benefits .grid > div:nth-child(even)').forEach(el => {
+                el.classList.add('slide-in-right');
+                observer.observe(el);
+            });
+        }
+
+        // --- Logic: Enhanced Ghee Cursor ---
+        function enhanceGheeCursor() {
+            let mouseX = 0, mouseY = 0;
+            let cursorX = 0, cursorY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function updateCursor() {
+                cursorX += (mouseX - cursorX) * 0.1;
+                cursorY += (mouseY - cursorY) * 0.1;
+
+                // Enhanced particle creation
+                if (Math.random() > 0.95) {
+                    particles.push({
+                        x: cursorX + (Math.random() - 0.5) * 20,
+                        y: cursorY + (Math.random() - 0.5) * 20,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: Math.random() * 3 + 1,
+                        life: 1,
+                        color: Math.random() > 0.7 ? '#D97706' : Math.random() > 0.5 ? '#FCD34D' : '#1E1B4B',
+                        size: Math.random() * 4 + 1
+                    });
+                }
+
+                requestAnimationFrame(updateCursor);
+            }
+            updateCursor();
+        }
+
+        // --- Logic: Product Quick View ---
+        function addQuickView() {
+            document.querySelectorAll('.group.relative.h-\\[450px\\]').forEach(card => {
+                const quickViewBtn = document.createElement('button');
+                quickViewBtn.innerHTML = '<i data-lucide="eye" class="w-4 h-4"></i>';
+                quickViewBtn.className = 'absolute top-4 left-4 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-sattva-gold hover:text-white';
+                quickViewBtn.onclick = () => showToast('Quick view feature coming soon!');
+                card.appendChild(quickViewBtn);
+            });
+        }
+
+        // Initialize all enhancements
+        document.addEventListener('DOMContentLoaded', () => {
+            addButtonEffects();
+            addEnhancedAnimations();
+            enhanceGheeCursor();
+            addQuickView();
+        });
+
+        animateCursor();
+
+    </script>
+
+    <!-- Ayurveda Modal -->
+    <div id="ayurveda-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;">
+            <div style="background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative;">
+                <!-- Close Button -->
+                <button onclick="closeAyurvedaModal()" style="position: absolute; top: 10px; right: 10px; background: #666; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">×</button>
+
+                <!-- Modal Content -->
+                <div style="padding: 30px;">
+                    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #1e40af;">Ayurveda: The Science of Life</h2>
+                    <p style="margin-bottom: 20px; color: #666;">
+                        Ayurveda is a 5,000-year-old holistic healing system from India that emphasizes balance between body, mind, and spirit.
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div style="background: #fef2f2; padding: 20px; border-radius: 8px; border: 1px solid #fecaca;">
+                            <h3 style="color: #dc2626; font-weight: bold; margin-bottom: 10px;">Pitta (Fire)</h3>
+                            <p style="color: #666; font-size: 14px;">Governs metabolism and digestion</p>
+                        </div>
+                        <div style="background: #eff6ff; padding: 20px; border-radius: 8px; border: 1px solid #bfdbfe;">
+                            <h3 style="color: #2563eb; font-weight: bold; margin-bottom: 10px;">Vata (Air)</h3>
+                            <p style="color: #666; font-size: 14px;">Controls movement and nervous system</p>
+                        </div>
+                        <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                            <h3 style="color: #16a34a; font-weight: bold; margin-bottom: 10px;">Kapha (Earth)</h3>
+                            <p style="color: #666; font-size: 14px;">Maintains structure and stability</p>
+                        </div>
+                        <div style="background: #fffbeb; padding: 20px; border-radius: 8px; border: 1px solid #fde68a;">
+                            <h3 style="color: #d97706; font-weight: bold; margin-bottom: 10px;">Ghee Benefits</h3>
+                            <p style="color: #666; font-size: 14px;">Enhances memory and balances doshas</p>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button onclick="closeAyurvedaModal()" style="background: #1e40af; color: white; padding: 12px 24px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer;">
+                            Close & Explore Products
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Button Effects -->
+    <style>
+        /* Button ripple effect */
+        .btn-ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .btn-ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Loading spinner */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Enhanced animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(217, 119, 6, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(217, 119, 6, 0.6); }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* Floating particles animation */
+        @keyframes float-particle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+
+        .float-particle {
+            animation: float-particle 8s ease-in-out infinite;
+        }
+
+        /* Enhanced reveal animation */
+        @keyframes slideInFromLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInFromRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide-in-left {
+            animation: slideInFromLeft 1s ease-out forwards;
+        }
+
+        .slide-in-right {
+            animation: slideInFromRight 1s ease-out forwards;
+        }
+
+        /* Parallax effect */
+        .parallax {
+            transform: translateZ(0);
+        }
+
+        /* Enhanced floating animation */
+        @keyframes enhanced-float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.7;
+            }
+            25% {
+                transform: translateY(-10px) rotate(90deg);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 1;
+            }
+            75% {
+                transform: translateY(-10px) rotate(270deg);
+                opacity: 0.9;
+            }
+        }
+
+        .enhanced-float {
+            animation: enhanced-float 12s ease-in-out infinite;
+        }
+
+        /* Magnetic hover effect */
+        .magnetic {
+            transition: transform 0.3s ease;
+        }
+
+        .magnetic:hover {
+            transform: scale(1.05);
+        }
+
+        /* Gradient text animation */
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, #D97706, #1E1B4B, #D97706);
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+
+</body>
+</html>

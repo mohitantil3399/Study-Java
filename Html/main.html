@@ -1,0 +1,649 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { ShoppingBag, Menu, X, ChevronDown, CheckCircle, Search, ArrowRight, Star, Leaf, Sun, Heart } from 'lucide-react';
+
+/* ================================================================================
+  IMAGE ASSET MANIFEST & DOWNLOAD LINKS
+  ================================================================================
+  To replace these with local files:
+  1. Download the image from the URL.
+  2. Place in your project folder (e.g., src/assets/).
+  3. Import at the top: import heroTurmeric from './assets/hero-turmeric.jpg';
+  4. Replace the string below with the variable name: hero_turmeric: heroTurmeric
+
+  LINE  | SECTION       | DESCRIPTION           | LINK
+  --------------------------------------------------------------------------------
+  43    | Hero          | Floating Turmeric     | https://images.unsplash.com/photo-1615485500704-8e99099928b3
+  44    | Hero          | Floating Garlic       | https://images.unsplash.com/photo-1610450919223-9366e632db2f
+  47    | Products      | Turmeric Ghee Product | https://images.unsplash.com/photo-1629196914375-f7e48f477b6d
+  48    | Products      | Garlic Ghee Product   | https://images.unsplash.com/photo-1541795020-f56b5c928736
+  49    | Products      | Brahmi Ghee Product   | https://images.unsplash.com/photo-1588612502268-f938d8d38698
+  52    | Process       | Parallax Farm BG      | https://images.unsplash.com/photo-1500382017468-9049fed747ef
+  55    | Traceability  | Farmer Profile        | https://images.unsplash.com/photo-1595661669862-3bdc348f95c4
+  58    | Testimonial   | User Avatar           | https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=ffdfbf
+  ================================================================================
+*/
+
+const ASSETS = {
+  hero: {
+    turmeric: "https://images.unsplash.com/photo-1615485500704-8e99099928b3?auto=format&fit=crop&q=80&w=200",
+    garlic: "https://images.unsplash.com/photo-1610450919223-9366e632db2f?auto=format&fit=crop&q=80&w=200"
+  },
+  products: {
+    turmeric: "https://images.unsplash.com/photo-1629196914375-f7e48f477b6d?auto=format&fit=crop&q=80&w=400",
+    garlic: "https://images.unsplash.com/photo-1541795020-f56b5c928736?auto=format&fit=crop&q=80&w=400",
+    brahmi: "https://images.unsplash.com/photo-1588612502268-f938d8d38698?auto=format&fit=crop&q=80&w=400"
+  },
+  process: {
+    background: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1500"
+  },
+  traceability: {
+    farmer: "https://images.unsplash.com/photo-1595661669862-3bdc348f95c4?auto=format&fit=crop&q=80&w=800"
+  },
+  testimonial: {
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=ffdfbf"
+  }
+};
+
+/* Emami Sattva - Enhanced Interactive Version
+  Features:
+  - Ghee Particle Cursor (Canvas)
+  - Smooth Scrolling
+  - Interactive Toast Notifications
+  - Advanced CSS Animations
+*/
+
+// --- 1. Ghee Cursor Component (Canvas-based for performance) ---
+const GheeCursor = () => {
+  const canvasRef = useRef(null);
+  const particles = useRef([]);
+  const mouse = useRef({ x: 0, y: 0 });
+  const isActive = useRef(false);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    // Resize handling
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Mouse tracking
+    const onMouseMove = (e) => {
+      mouse.current = { x: e.clientX, y: e.clientY };
+      isActive.current = true;
+      // Add particles on move
+      for (let i = 0; i < 2; i++) {
+        particles.current.push({
+          x: e.clientX + (Math.random() - 0.5) * 10,
+          y: e.clientY + (Math.random() - 0.5) * 10,
+          vx: (Math.random() - 0.5) * 1,
+          vy: Math.random() * 2 + 1, // Fall down like grains
+          life: 1,
+          color: Math.random() > 0.5 ? '#D97706' : '#FCD34D', // Saffron & Gold
+          size: Math.random() * 3 + 1
+        });
+      }
+    };
+    window.addEventListener('mousemove', onMouseMove);
+
+    // Animation Loop
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particles.current.forEach((p, index) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.02;
+        p.size *= 0.95;
+
+        if (p.life <= 0) {
+          particles.current.splice(index, 1);
+        } else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.life;
+          ctx.fill();
+        }
+      });
+      
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(animate);
+    };
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', onMouseMove);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[100]" />;
+};
+
+// --- 2. Toast Notification Component ---
+const Toast = ({ message, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className="fixed bottom-8 right-8 z-[110] bg-[#1E1B4B] text-white px-6 py-4 rounded-xl shadow-2xl animate-slide-in flex items-center space-x-3 border-l-4 border-[#D97706]">
+      <div className="bg-[#D97706] rounded-full p-1">
+        <CheckCircle size={16} className="text-white" />
+      </div>
+      <div>
+        <h4 className="font-serif font-bold text-sm">Success</h4>
+        <p className="text-xs text-indigo-200">{message}</p>
+      </div>
+    </div>
+  );
+};
+
+// --- Main App Component ---
+const App = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg) => {
+    setToast(msg);
+  };
+
+  // Scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Smooth scroll handler
+  const scrollToSection = (e, id) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setMenuOpen(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#FDFBF7] text-[#44403C] font-sans selection:bg-[#D97706] selection:text-white overflow-x-hidden scroll-smooth">
+      <GheeCursor />
+      
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+
+      {/* --- Navigation --- */}
+      <nav 
+        className={`fixed w-full z-50 transition-all duration-500 ${
+          scrolled ? 'bg-[#FDFBF7]/95 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-6'
+        }`
+      >
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+          {/* Logo Brand */}
+          <div 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })
+            className="flex flex-col items-start group cursor-pointer"
+          >
+            <span className="text-xs tracking-[0.3em] uppercase font-bold text-[#D97706]">Emami</span>
+            <h1 className="font-serif text-3xl font-bold tracking-tight text-[#1E1B4B]">
+              Sattva<span className="text-[#D97706]">.</span>
+            </h1>
+          </div>
+
+          {/* Desktop Links */}
+          <div className="hidden md:flex items-center space-x-12">
+            {[
+              { name: 'Our Heritage', id: 'heritage' },
+              { name: 'The Process', id: 'process' },
+              { name: 'Infusions', id: 'collection' },
+              { name: 'Traceability', id: 'traceability' }
+            ].map((item) => (
+              <a 
+                key={item.name} 
+                href={`#${item.id}`} 
+                onClick={(e) => scrollToSection(e, item.id)}
+                className="text-sm uppercase tracking-widest hover:text-[#D97706] transition-colors font-medium text-[#1E1B4B] relative group"
+              >
+                {item.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D97706] transition-all duration-300 group-hover:w-full"></span>
+              </a>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div className="hidden md:flex items-center space-x-6">
+            <button 
+              onClick={() => showToast("Opened Shopping Cart")}
+              className="flex items-center space-x-2 bg-[#1E1B4B] text-[#FDFBF7] px-6 py-2 rounded-full hover:bg-[#D97706] transition-all duration-300 shadow-lg hover:shadow-orange-200 transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <ShoppingBag size={18} />
+              <span className="text-sm font-medium">Shop</span>
+            </button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button className="md:hidden text-[#1E1B4B]" onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        {menuOpen && (
+          <div className="absolute top-full left-0 w-full bg-[#FDFBF7] border-b border-stone-200 p-6 flex flex-col space-y-4 md:hidden animate-fade-in-down shadow-xl">
+             {[
+              { name: 'Our Heritage', id: 'heritage' },
+              { name: 'The Process', id: 'process' },
+              { name: 'Infusions', id: 'collection' },
+              { name: 'Traceability', id: 'traceability' }
+            ].map((item) => (
+              <a 
+                key={item.name} 
+                href={`#${item.id}`} 
+                onClick={(e) => scrollToSection(e, item.id)}
+                className="text-lg font-serif text-[#1E1B4B] border-b border-stone-100 pb-2"
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        )}
+      </nav>
+
+      {/* --- Hero Section --- */}
+      <section id="home" className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        {/* Animated Background Rings (Warli/Mandala feel) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vh] h-[120vh] border border-[#D97706]/10 rounded-full animate-spin-super-slow pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vh] h-[150vh] border border-[#D97706]/5 rounded-full animate-spin-slow-reverse pointer-events-none"></div>
+        
+        {/* Floating Particles BG */}
+        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
+            {[...Array(20)].map((_, i) => (
+                <div 
+                    key={i}
+                    className="absolute bg-[#D97706] rounded-full animate-float-random opacity-20"
+                    style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        width: `${Math.random() * 10 + 5}px`,
+                        height: `${Math.random() * 10 + 5}px`,
+                        animationDuration: `${Math.random() * 10 + 10}s`,
+                        animationDelay: `${Math.random() * 5}s`
+                    }}
+                />
+            ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 w-full grid md:grid-cols-2 gap-12 items-center relative z-10">
+          
+          {/* Text Content */}
+          <div className="space-y-8 animate-fade-in-up">
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-amber-50 to-orange-50 text-[#D97706] px-6 py-2 rounded-full border border-[#D97706]/20 shadow-sm">
+              <Sun size={14} className="animate-spin-slow" />
+              <span className="text-xs font-bold tracking-widest uppercase">The Heritage Infusion Series</span>
+            </div>
+            
+            <h2 className="font-serif text-6xl md:text-7xl lg:text-8xl leading-[0.9] text-[#1E1B4B]">
+              Taste the <br />
+              <span className="italic text-[#D97706] relative">
+                Wisdom
+                <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#D97706]/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
+                </svg>
+              </span> of India.
+            </h2>
+            
+            <p className="text-lg md:text-xl text-stone-600 max-w-md leading-relaxed">
+              We don't just make ghee; we preserve Prana. 
+              Experience the ancient Bilona method, infused with the purity of Ayurvedic botanicals.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+              <button 
+                onClick={(e) => scrollToSection(e, 'collection')}
+                className="bg-[#1E1B4B] text-white px-8 py-4 rounded-full text-lg hover:bg-[#D97706] transition-all duration-300 shadow-xl shadow-indigo-900/10 hover:shadow-orange-500/20 transform hover:-translate-y-1"
+              >
+                Discover the Collection
+              </button>
+              <button 
+                onClick={(e) => scrollToSection(e, 'process')}
+                className="flex items-center space-x-2 px-8 py-4 rounded-full border border-stone-300 hover:border-[#D97706] hover:text-[#D97706] transition-all bg-white/50 backdrop-blur-sm group"
+              >
+                <span className="font-medium">Watch the Process</span>
+                <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+
+          {/* Hero Visual: Abstract Ghee Pour */}
+          <div className="relative h-[500px] w-full flex justify-center items-center">
+             {/* Main Jar Visual */}
+             <div className="relative z-20 w-64 h-80 transition-transform duration-500 hover:scale-105">
+                {/* The "Liquid" inside */}
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 rounded-t-full rounded-b-[3rem] shadow-2xl animate-liquid-pulse"></div>
+                {/* Glass reflection */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-t-full rounded-b-[3rem] border-4 border-white/20 backdrop-blur-[2px]"></div>
+                
+                {/* Label */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 z-10">
+                  <p className="font-serif text-3xl italic mb-2 drop-shadow-md">Sattva</p>
+                  <p className="text-xs tracking-[0.3em] uppercase opacity-90 font-medium">A2 Bilona Ghee</p>
+                  <div className="mt-8 w-12 h-1 bg-white/40 mx-auto rounded-full"></div>
+                </div>
+                
+                {/* Glow Effect */}
+                <div className="absolute -inset-8 bg-amber-500/20 blur-3xl -z-10 rounded-full animate-pulse-slow"></div>
+             </div>
+
+             {/* Floating Ingredients with Images - UPDATED TO USE ASSETS CONSTANT */}
+             <div className="absolute top-20 right-10 w-24 h-24 bg-white shadow-xl rounded-2xl flex items-center justify-center animate-bounce-slow delay-100 z-30 overflow-hidden border-2 border-white hover:scale-110 transition-transform cursor-pointer">
+                <img src={ASSETS.hero.turmeric} alt="Turmeric" className="w-full h-full object-cover opacity-90" />
+                <div className="absolute inset-0 bg-black/10"></div>
+             </div>
+             <div className="absolute bottom-20 left-10 w-28 h-28 bg-white shadow-xl rounded-2xl flex items-center justify-center animate-bounce-slow delay-300 z-30 overflow-hidden border-2 border-white hover:scale-110 transition-transform cursor-pointer">
+                <img src={ASSETS.hero.garlic} alt="Garlic" className="w-full h-full object-cover opacity-90" />
+             </div>
+          </div>
+        </div>
+        
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce text-stone-400 cursor-pointer" onClick={(e) => scrollToSection(e, 'collection')}>
+          <span className="text-xs uppercase tracking-widest mb-2">The Journey</span>
+          <ChevronDown />
+        </div>
+      </section>
+
+      {/* --- Product Showcase: The Trio --- */}
+      <section id="collection" className="py-32 bg-white relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-20">
+            <h3 className="text-[#D97706] font-bold tracking-widest uppercase text-sm mb-4">The Collection</h3>
+            <h2 className="font-serif text-5xl text-[#1E1B4B] mb-6">Heritage Infusion Series</h2>
+            <p className="text-stone-500 max-w-2xl mx-auto">
+              We bridge the gap between ancestral wisdom and modern wellness. 
+              Our A2 Ghee is slow-churned and infused with whole botanicals.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <ProductCard 
+              title="Turmeric Golden Ghee" 
+              desc="Infused with Lakadong Turmeric for immunity." 
+              color="bg-amber-50" 
+              accent="text-amber-600"
+              image={ASSETS.products.turmeric}
+              icon={<Sun className="text-amber-500" size={32} />}
+              onAddToCart={() => showToast("Added Turmeric Ghee to Cart")}
+            />
+            <ProductCard 
+              title="Garlic Heart Ghee" 
+              desc="Slow-roasted garlic for heart health & digestion." 
+              color="bg-stone-50" 
+              accent="text-stone-600"
+              image={ASSETS.products.garlic}
+              icon={<Heart className="text-red-400" size={32} />}
+              onAddToCart={() => showToast("Added Garlic Ghee to Cart")}
+            />
+            <ProductCard 
+              title="Brahmi Mind Ghee" 
+              desc="Enriched with Brahmi leaves for focus and memory." 
+              color="bg-emerald-50" 
+              accent="text-emerald-700"
+              image={ASSETS.products.brahmi}
+              icon={<Leaf className="text-emerald-600" size={32} />}
+              onAddToCart={() => showToast("Added Brahmi Ghee to Cart")}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* --- The Bilona Process (Scrollytelling) --- */}
+      <section id="process" className="py-32 bg-[#1E1B4B] text-[#FDFBF7] overflow-hidden relative">
+        {/* Parallax BG Image - UPDATED TO USE ASSETS CONSTANT */}
+        <div className="absolute inset-0 opacity-10">
+             <img src={ASSETS.process.background} className="w-full h-full object-cover" alt="Farm Background" />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1E1B4B] via-transparent to-[#1E1B4B] opacity-90"></div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="flex flex-col md:flex-row gap-16 items-start">
+            
+            {/* Sticky Text Section */}
+            <div className="md:w-1/2 md:sticky md:top-32">
+              <h2 className="font-serif text-5xl mb-8 leading-tight">
+                From Soil to <br/><span className="text-[#D97706]">Soul.</span>
+              </h2>
+              <p className="text-indigo-200 text-lg mb-8 leading-relaxed">
+                Most ghee today is industrial oil. Ours is a ritual. We strictly follow the 5-step Vedic Bilona method to ensure that every jar contains not just fat, but the essence of Indian tradition.
+              </p>
+              <div className="flex flex-col space-y-6">
+                 <div className="flex items-center space-x-4 p-4 bg-indigo-900/30 rounded-xl backdrop-blur-sm border border-indigo-500/20 hover:border-[#D97706]/50 transition-colors">
+                    <CheckCircle className="text-[#D97706]" />
+                    <span>Free-grazing Gir Cows (A2 Milk)</span>
+                 </div>
+                 <div className="flex items-center space-x-4 p-4 bg-indigo-900/30 rounded-xl backdrop-blur-sm border border-indigo-500/20 hover:border-[#D97706]/50 transition-colors">
+                    <CheckCircle className="text-[#D97706]" />
+                    <span>Curd-based churning (Not Cream)</span>
+                 </div>
+                 <div className="flex items-center space-x-4 p-4 bg-indigo-900/30 rounded-xl backdrop-blur-sm border border-indigo-500/20 hover:border-[#D97706]/50 transition-colors">
+                    <CheckCircle className="text-[#D97706]" />
+                    <span>Hand-churned in Earthen Pots</span>
+                 </div>
+              </div>
+            </div>
+
+            {/* Timeline Visuals */}
+            <div className="md:w-1/2 w-full space-y-12 pl-4 md:pl-0 border-l border-indigo-800 md:border-none">
+              <ProcessStep number="01" title="The Source" text="Milk is collected from free-grazing Gir Cows at dawn." />
+              <ProcessStep number="02" title="The Culture" text="Milk is boiled in earthen pots and set to curd overnight." />
+              <ProcessStep number="03" title="The Churn" text="The curd is hand-churned (Bilona) to separate the makkhan." />
+              <ProcessStep number="04" title="The Fire" text="Makkhan is slow-cooked over firewood to create liquid gold." />
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* --- Traceability Widget (The "Trust" Feature) --- */}
+      <section id="traceability" className="py-24 bg-[#FDFBF7] relative">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-stone-100 flex flex-col md:flex-row group hover:shadow-3xl transition-shadow duration-500">
+            
+            {/* Image Side - UPDATED TO USE ASSETS CONSTANT */}
+            <div className="md:w-2/5 bg-stone-200 relative min-h-[300px] overflow-hidden">
+              <img 
+                src={ASSETS.traceability.farmer}
+                alt="Farmer Ram Kaka" 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6">
+                <p className="text-white font-serif text-xl">Ram Kaka</p>
+                <p className="text-stone-300 text-sm">Head Herdsman, Nashik</p>
+              </div>
+            </div>
+
+            {/* Interactive Side */}
+            <div className="md:w-3/5 p-12 flex flex-col justify-center">
+              <div className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase mb-4 w-max">
+                Transparency First
+              </div>
+              <h3 className="font-serif text-3xl text-[#1E1B4B] mb-4">Meet the hands behind your jar.</h3>
+              <p className="text-stone-500 mb-8">
+                Every batch tells a story. Enter the batch code found on the bottom of your jar to see the milking date, the farmer, and the lab report.
+              </p>
+              
+              <div className="flex space-x-2">
+                <div className="relative flex-grow">
+                  <input 
+                    type="text" 
+                    placeholder="Enter Batch Code (e.g., A2-409)" 
+                    className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 focus:outline-none focus:border-[#D97706] transition-colors"
+                  />
+                  <Search className="absolute right-3 top-3.5 text-stone-400" size={20} />
+                </div>
+                <button 
+                  onClick={() => showToast("Tracing Batch A2-409... Found!")}
+                  className="bg-[#1E1B4B] text-white px-6 rounded-lg font-medium hover:bg-[#D97706] transition-colors shadow-lg active:scale-95 transform"
+                >
+                  Trace
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* --- Testimonial / Social Proof --- */}
+      <section id="heritage" className="py-20 text-center px-6 bg-amber-50/50">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex justify-center space-x-1 mb-6">
+            {[1,2,3,4,5].map(i => <Star key={i} className="fill-[#D97706] text-[#D97706]" size={24} />)}
+          </div>
+          <h2 className="font-serif text-3xl md:text-4xl italic text-[#1E1B4B] leading-snug mb-8">
+            "Finally, a ghee that tastes like my grandmother's kitchen. The turmeric infusion is subtle yet deeply comforting. Emami Sattva has brought purity back."
+          </h2>
+          <div className="flex items-center justify-center space-x-4">
+            <div className="w-12 h-12 bg-stone-200 rounded-full overflow-hidden border-2 border-white shadow-md">
+                {/* UPDATED TO USE ASSETS CONSTANT */}
+                <img src={ASSETS.testimonial.avatar} alt="User" />
+            </div>
+            <div className="text-left">
+                <p className="font-bold text-[#1E1B4B]">Priya S.</p>
+                <p className="text-xs text-stone-500 uppercase tracking-widest">Mumbai, India</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- Footer --- */}
+      <footer className="bg-[#1E1B4B] text-[#FDFBF7] pt-20 pb-10 border-t border-indigo-900">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-16">
+          <div className="col-span-1 md:col-span-1">
+            <h2 className="font-serif text-2xl font-bold mb-6">Sattva.</h2>
+            <p className="text-indigo-200 text-sm leading-relaxed mb-6">
+              A tribute to the Golden Bird. Rediscovering the sattvic way of life through pure, ethically sourced ingredients.
+            </p>
+            <span className="text-xs text-indigo-400">Part of the Emami Group</span>
+          </div>
+
+          <div>
+            <h4 className="text-[#D97706] font-bold text-xs uppercase tracking-widest mb-6">Shop</h4>
+            <ul className="space-y-3 text-indigo-100 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">All Products</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Turmeric Infusion</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Garlic Infusion</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Gift Boxes</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-[#D97706] font-bold text-xs uppercase tracking-widest mb-6">Learn</h4>
+            <ul className="space-y-3 text-indigo-100 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">The Bilona Method</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Our Farmers</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Traceability</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Recipes</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-[#D97706] font-bold text-xs uppercase tracking-widest mb-6">Newsletter</h4>
+            <p className="text-indigo-200 text-xs mb-4">Join our community for Ayurvedic tips and early access.</p>
+            <div className="flex border-b border-indigo-700 pb-2 focus-within:border-[#D97706] transition-colors">
+              <input type="email" placeholder="Email Address" className="bg-transparent w-full outline-none text-white placeholder-indigo-500 text-sm" />
+              <button className="text-[#D97706] font-bold text-sm uppercase hover:text-white transition-colors">Join</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center border-t border-indigo-900 pt-8 text-xs text-indigo-400">
+          <p>© 2024 Emami Sattva. All rights reserved.</p>
+          <div className="flex space-x-6 mt-4 md:mt-0">
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+// --- Sub-Components ---
+
+const ProductCard = ({ title, desc, color, accent, icon, image, onAddToCart }) => {
+  return (
+    <div className={`group relative h-[450px] rounded-3xl ${color} border border-transparent hover:border-stone-200 transition-all duration-500 hover:shadow-2xl cursor-pointer overflow-hidden flex flex-col`}>
+      {/* Background Image (Initially hidden/faded) */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0">
+          <img src={image} alt={title} className="w-full h-full object-cover opacity-20 transform scale-125 group-hover:scale-100 transition-transform duration-1000" />
+          <div className={`absolute inset-0 bg-gradient-to-t from-${color.split('-')[1]}-100 to-transparent mix-blend-multiply`}></div>
+      </div>
+
+      <div className="absolute top-0 right-0 p-6 z-10 transition-transform duration-500 transform group-hover:rotate-12 group-hover:scale-110">
+        <div className="bg-white p-3 rounded-full shadow-md">
+            {icon}
+        </div>
+      </div>
+      
+      <div className="relative z-10 mt-auto p-8 bg-gradient-to-t from-white/90 via-white/50 to-transparent h-full flex flex-col justify-end">
+        <h3 className={`font-serif text-3xl ${accent} mb-3 group-hover:translate-x-1 transition-transform leading-tight`}>{title}</h3>
+        <p className="text-stone-600 text-sm leading-relaxed mb-6 font-medium">{desc}</p>
+        
+        <div className="flex items-center justify-between">
+            <button 
+                onClick={(e) => { e.stopPropagation(); onAddToCart(); }}
+                className="bg-[#1E1B4B] text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest opacity-90 hover:opacity-100 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 hover:bg-[#D97706] shadow-lg"
+            >
+                Add to Cart
+            </button>
+            <span className="text-[#1E1B4B] font-bold text-lg">₹899</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ProcessStep = ({ number, title, text }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const domRef = useRef();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => setIsVisible(entry.isIntersecting));
+    });
+    const currentElement = domRef.current;
+    if (currentElement) observer.observe(currentElement);
+    return () => {
+      if (currentElement) observer.unobserve(currentElement);
+    };
+  }, []);
+
+  return (
+    <div 
+      ref={domRef} 
+      className={`flex gap-6 transition-all duration-1000 transform group cursor-default ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}
+    >
+      <div className="flex-shrink-0 relative">
+        <div className="w-16 h-16 rounded-full border border-indigo-700 bg-[#1E1B4B] flex items-center justify-center text-xl font-serif text-[#D97706] z-10 relative group-hover:bg-[#D97706] group-hover:text-white transition-colors duration-500 shadow-lg shadow-indigo-900/50">
+          {number}
+        </div>
+        {/* Connecting Line */}
+        <div className="absolute top-16 left-1/2 w-px h-24 bg-indigo-800 -translate-x-1/2 -z-0"></div>
+      </div>
+      <div className="pb-12">
+        <h4 className="text-xl font-medium mb-2 text-indigo-50 group-hover:text-[#D97706] transition-colors">{title}</h4>
+        <p className="text-indigo-300 text-sm leading-relaxed max-w-sm">{text}</p>
+      </div>
+    </div>
+  );
+};
+
+export default App;

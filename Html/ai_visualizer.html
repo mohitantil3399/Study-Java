@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Word-by-Word Visualizer</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-main: #f8fafc;
+            --accent-glow: #38bdf8;
+            --math-glow: #a78bfa;
+            --success: #4ade80;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        button {
+            background: #1e293b;
+            color: white;
+            border: 1px solid var(--accent-glow);
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: var(--accent-glow);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        #main-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* The Output Area */
+        #output-container {
+            min-height: 100px;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 20px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-content: flex-start;
+        }
+
+        .output-word {
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: dropIn 0.5s forwards;
+        }
+
+        @keyframes dropIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Neural Network & Math Area */
+        #ai-brain {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #math-flash {
+            position: absolute;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 28px;
+            color: var(--math-glow);
+            text-shadow: 0 0 10px var(--math-glow);
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-align: center;
+            z-index: 10;
+        }
+
+        /* SVG Neural Network */
+        #network-svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.3;
+        }
+        
+        .node { fill: #475569; transition: all 0.2s; }
+        .edge { stroke: #334155; stroke-width: 2; transition: all 0.2s; }
+        
+        .node.active { fill: var(--accent-glow); filter: drop-shadow(0 0 8px var(--accent-glow)); }
+        .edge.active { stroke: var(--accent-glow); stroke-width: 4; }
+
+        /* The Street (Vocabulary Pool) */
+        #the-street {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center;
+            gap: 15px;
+        }
+
+        .street-word {
+            background: #1e293b;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            border: 1px solid #334155;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        /* Animation States for Words */
+        .street-word.analyzing {
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 10px var(--accent-glow);
+            transform: scale(1.1);
+        }
+
+        .street-word.selected {
+            background: var(--success);
+            color: #000;
+            border-color: var(--success);
+            box-shadow: 0 0 20px var(--success);
+            transform: scale(1.3) translateY(-30px);
+            z-index: 20;
+        }
+
+        .street-word.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2>AI Logic Visualizer</h2>
+        <button onclick="startSimulation('statistics')">Prompt: What is Statistics?</button>
+        <button onclick="startSimulation('python')">Prompt: What is Python?</button>
+        <button id="pause-btn" onclick="togglePause()">Pause</button>
+    </header>
+
+    <div id="main-view">
+        <div id="output-container"></div>
+        
+        <div id="ai-brain">
+            <svg id="network-svg"></svg>
+            <div id="math-flash"></div>
+        </div>
+    </div>
+
+    <div id="the-street"></div>
+
+    <script>
+        // Data Scenarios
+        const data = {
+            statistics: {
+                answer: ["Statistics", "is", "the", "mathematical", "science", "of", "collecting,", "analyzing,", "and", "interpreting", "data."],
+                distractors: ["apple", "run", "ocean", "Python", "code", "quantum", "gravity", "car", "fast", "algorithm"]
+            },
+            python: {
+                answer: ["Python", "is", "a", "high-level,", "versatile", "programming", "language", "used", "for", "data", "and", "AI."],
+                distractors: ["snake", "biology", "statistics", "jump", "compile", "hardware", "cpu", "cloud", "water"]
+            }
+        };
+
+        const mathFormulas = [
+            "P(y_i) = exp(z_i) / Σ exp(z_j)", // Softmax
+            "Attention(Q,K,V) = softmax(QK^T / √d)V", // Attention
+            "LayerNorm(x) = γ((x - μ) / √(σ² + ε)) + β", // Normalization
+            "H_t = tanh(W_h * [h_{t-1}, x_t] + b_h)", // Hidden State
+            "Loss = -Σ y_i * log(p_i)" // Cross Entropy
+        ];
+
+        let isAnimating = false;
+        let paused = false;
+
+        // Utility to pause execution
+        const sleep = (ms) => {
+            return new Promise(resolve => {
+                let remaining = ms;
+                const tick = () => {
+                    if (paused) {
+                        setTimeout(tick, 100);
+                    } else {
+                        remaining -= 100;
+                        if (remaining <= 0) {
+                            resolve();
+                        } else {
+                            setTimeout(tick, 100);
+                        }
+                    }
+                };
+                if (ms <= 0) resolve();
+                else tick();
+            });
+        };
+
+        function togglePause() {
+            paused = !paused;
+            document.getElementById('pause-btn').innerText = paused ? 'Resume' : 'Pause';
+        }
+
+        // Setup the SVG Neural Network background
+        function setupNetwork() {
+            const svg = document.getElementById('network-svg');
+            svg.innerHTML = ''; // Clear
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+            
+            // Generate random nodes
+            const nodes = [];
+            for(let i=0; i<30; i++) {
+                nodes.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    id: i
+                });
+            }
+
+            // Draw edges
+            nodes.forEach(n1 => {
+                nodes.forEach(n2 => {
+                    if(n1.id !== n2.id && Math.random() > 0.92) {
+                        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        line.setAttribute("x1", n1.x); line.setAttribute("y1", n1.y);
+                        line.setAttribute("x2", n2.x); line.setAttribute("y2", n2.y);
+                        line.classList.add('edge');
+                        svg.appendChild(line);
+                    }
+                });
+            });
+
+            // Draw nodes
+            nodes.forEach(n => {
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", n.x);
+                circle.setAttribute("cy", n.y);
+                circle.setAttribute("r", 6);
+                circle.classList.add('node');
+                svg.appendChild(circle);
+            });
+        }
+
+        // Animate Neural Network
+        async function pulseNetwork() {
+            const nodes = document.querySelectorAll('.node');
+            const edges = document.querySelectorAll('.edge');
+            
+            for(let i=0; i<10; i++) {
+                const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
+                const randomEdge = edges[Math.floor(Math.random() * edges.length)];
+                
+                randomNode.classList.add('active');
+                if(randomEdge) randomEdge.classList.add('active');
+                
+                setTimeout(() => {
+                    randomNode.classList.remove('active');
+                    if(randomEdge) randomEdge.classList.remove('active');
+                }, 400);
+            }
+        }
+
+        // Main Animation Sequence
+        async function startSimulation(topic) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const scenario = data[topic];
+            const outputContainer = document.getElementById('output-container');
+            const street = document.getElementById('the-street');
+            const mathFlash = document.getElementById('math-flash');
+
+            outputContainer.innerHTML = '';
+            street.innerHTML = '';
+            setupNetwork();
+
+            // 1. Populate the jumbled street
+            let vocabPool = [...scenario.answer, ...scenario.distractors];
+            vocabPool = vocabPool.sort(() => Math.random() - 0.5); // Shuffle
+
+            vocabPool.forEach(word => {
+                const el = document.createElement('div');
+                el.className = 'street-word';
+                el.innerText = word;
+                el.dataset.word = word; // Store exact word for matching
+                street.appendChild(el);
+            });
+
+            await sleep(1000);
+
+            // 2. Word-by-Word Generation Loop
+            for (let targetWord of scenario.answer) {
+                // A. Neural Network "thinks"
+                let thinkTime = 0;
+                let brainInterval = setInterval(pulseNetwork, 200);
+                
+                // B. Flash Math logic
+                mathFlash.innerText = mathFormulas[Math.floor(Math.random() * mathFormulas.length)];
+                mathFlash.style.opacity = 1;
+
+                // C. Highlight random words in the street (simulating probability check)
+                const streetElements = Array.from(document.querySelectorAll('.street-word:not(.hidden)'));
+                for(let i=0; i<8; i++) {
+                    let randomWord = streetElements[Math.floor(Math.random() * streetElements.length)];
+                    randomWord.classList.add('analyzing');
+                    await sleep(300);
+                    randomWord.classList.remove('analyzing');
+                }
+
+                clearInterval(brainInterval);
+                mathFlash.style.opacity = 0;
+
+                // D. Find the Correct Word (Highest Probability selection)
+                const correctElement = streetElements.find(el => el.dataset.word === targetWord);
+                
+                if (correctElement) {
+                    // E. The selection "jump"
+                    correctElement.classList.add('selected');
+                    await sleep(600); // Wait for the "pop out" animation
+                    
+                    correctElement.classList.add('hidden'); // Remove from street
+                    
+                    // F. Append to output box
+                    const outSpan = document.createElement('span');
+                    outSpan.className = 'output-word';
+                    outSpan.innerText = targetWord;
+                    outputContainer.appendChild(outSpan);
+                }
+
+                await sleep(500); // Pause before predicting next token
+            }
+
+            isAnimating = false;
+        }
+
+        // Initialize grid on load
+        window.addEventListener('resize', setupNetwork);
+        setupNetwork();
+    </script>
+</body>
+</html>

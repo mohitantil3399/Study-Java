@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #f0f0f0; padding: 20px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background: white; margin: 10% auto; padding: 20px; width: 80%; max-width: 600px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1 class="text-3xl font-bold mb-4">Test Page</h1>
+
+    <button onclick="testAlert()" class="bg-blue-500 text-white px-4 py-2 rounded mr-4">Test Alert</button>
+    <button onclick="openModal()" class="bg-green-500 text-white px-4 py-2 rounded">Open Modal</button>
+
+    <div id="test-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl mb-4">Modal Test</h2>
+            <p>This is a test modal. JavaScript is working!</p>
+            <button onclick="closeModal()" class="bg-red-500 text-white px-4 py-2 rounded mt-4">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function testAlert() {
+            alert('JavaScript is working!');
+        }
+
+        function openModal() {
+            document.getElementById('test-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('test-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
