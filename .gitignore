@@ -1,0 +1,10 @@
+# IDE / Editor files
+.idea/
+*.iml
+.vscode/
+
+# Build outputs & compiled binaries
+*.class
+*.exe
+out/
+bin/

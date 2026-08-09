@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulletproof Hiring Automation Architecture 2026</title>
+
+    <!-- Essential CDN Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: 'hsl(210, 75%, 95%)',
+                            100: 'hsl(210, 75%, 85%)',
+                            200: 'hsl(210, 75%, 75%)',
+                            300: 'hsl(210, 75%, 65%)',
+                            400: 'hsl(210, 75%, 55%)',
+                            500: 'hsl(210, 75%, 40%)',
+                            600: 'hsl(210, 75%, 35%)',
+                            700: 'hsl(210, 75%, 25%)',
+                            800: 'hsl(210, 75%, 15%)',
+                            900: 'hsl(210, 75%, 10%)'
+                        },
+                        accent: {
+                            50: 'hsl(240, 65%, 95%)',
+                            100: 'hsl(240, 65%, 85%)',
+                            200: 'hsl(240, 65%, 75%)',
+                            300: 'hsl(240, 65%, 65%)',
+                            400: 'hsl(240, 65%, 60%)',
+                            500: 'hsl(240, 65%, 55%)',
+                            600: 'hsl(240, 65%, 50%)',
+                            700: 'hsl(240, 65%, 40%)',
+                            800: 'hsl(240, 65%, 30%)',
+                            900: 'hsl(240, 65%, 20%)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+
+    <!-- Preline UI Components -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.js"></script>
+
+    <!-- Micro-interactions & Custom Styles -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        .btn-interactive {
+            transition: all 0.2s ease-out;
+        }
+
+        .btn-interactive:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-interactive:active {
+            transform: scale(0.95);
+        }
+
+        .card-interactive {
+            transition: all 0.3s ease-out;
+            border: 1px solid transparent;
+            --border-lightness: 40%;
+        }
+
+        .dark .card-interactive {
+            --border-lightness: 60%;
+        }
+
+        .card-interactive:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            filter: brightness(0.98);
+        }
+
+        /* Primary colored cards */
+        .card-interactive[class*="primary"]:hover,
+        .card-interactive[class*="white"]:hover,
+        .card-interactive[class*="gray-"]:hover {
+            border-color: hsl(210, 75%, var(--border-lightness));
+        }
+
+        /* Accent colored cards */
+        .card-interactive[class*="accent"]:hover {
+            border-color: hsl(240, 65%, var(--border-lightness));
+        }
+
+        .dark .card-interactive:hover {
+            filter: brightness(1.05);
+        }
+    </style>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            document.getElementById('sunIcon').style.display = isDark ? 'block' : 'none';
+            document.getElementById('moonIcon').style.display = isDark ? 'none' : 'block';
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <!-- Progress Bar -->
+    <div class="fixed top-0 left-0 h-1 bg-primary-500 dark:bg-primary-400 z-[60] transition-all duration-300 ease-out"
+        id="progressBar"></div>
+
+    <!-- Floating Header -->
+    <header
+        class="fixed top-0 left-0 right-0 z-50 backdrop-blur bg-gray-50/90 dark:bg-gray-900/90 border-b border-primary-500/20 dark:border-primary-600/20">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-bold text-primary-700 dark:text-primary-300">Hiring Automation 2026</h1>
+
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#home"
+                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 transition-colors">Home</a>
+                    <a href="#architecture"
+                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 transition-colors">Architecture</a>
+                    <a href="#stack"
+                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 transition-colors">Stack</a>
+                    <a href="#pricing"
+                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 transition-colors">Pricing</a>
+                    <a href="#privacy"
+                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 transition-colors">Privacy</a>
+                    <a href="#scalability"
+                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 transition-colors">Scalability</a>
+                    <a href="#compliance"
+                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 transition-colors">Compliance</a>
+                    <a href="#conclusion"
+                        class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 transition-colors">Conclusion</a>
+                </nav>
+
+                <button onclick="toggleDarkMode()"
+                    class="btn-interactive p-2 rounded-lg bg-primary-100 dark:bg-primary-800 text-primary-600 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-700 transition-all">
+                    <i data-lucide="sun" id="sunIcon" class="w-5 h-5" style="display:none;"></i>
+                    <i data-lucide="moon" id="moonIcon" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        <!-- Hero Section -->
+        <section id="home" class="py-40 bg-primary-50/50 dark:bg-gray-900" data-aos="fade-up">
+            <div class="max-w-6xl mx-auto px-6">
+                <div class="text-center space-y-6">
+                    <h2 class="text-5xl font-bold text-primary-700 dark:text-primary-300"
+                        data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                        Bulletproof Hiring Automation Architecture for July 2026
+                    </h2>
+                    <p class="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+                        A comprehensive, resilient hiring automation framework prioritizing operational scalability,
+                        rate limits, pricing efficiency, and data privacy for the holding in-charge company
+                    </p>
+
+                    <div class="grid md:grid-cols-3 gap-6 mt-12">
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <div
+                                class="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg mb-4">
+                                <i data-lucide="shield-check"
+                                    class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-2">Operational
+                                Scalability</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Designed for massive scale with robust
+                                error handling and load distribution</p>
+                        </div>
+
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <div
+                                class="flex items-center justify-center w-12 h-12 bg-accent-100 dark:bg-accent-900/30 rounded-lg mb-4">
+                                <i data-lucide="dollar-sign" class="w-6 h-6 text-accent-600 dark:text-accent-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-2">Cost Efficiency
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Optimized pricing models leveraging
+                                free-tier capabilities and credit-based economies</p>
+                        </div>
+
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <div
+                                class="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg mb-4">
+                                <i data-lucide="lock" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-2">Data Privacy
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Full GDPR compliance with EU-U.S. Data
+                                Privacy Framework and consent management</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Architecture Section -->
+        <section id="architecture" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300"
+                    data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                    Core Architecture Foundation
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8 items-center mb-12">
+                    <div class="space-y-6">
+                        <p class="text-gray-700 dark:text-gray-300">
+                            The hiring automation architecture leverages Make.com as the central orchestration engine,
+                            utilizing its operations-based pricing model where an
+                            <span
+                                class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">operation</span>
+                            is defined as one module run.
+                        </p>
+
+                        <p class="text-gray-700 dark:text-gray-300"
+                            data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                            The total cost is calculated by multiplying the number of modules per scenario by the number
+                            of executions per day, then by
+                            <span
+                                class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">30</span>
+                            for monthly billing. For example, a 5-module scenario triggered 50 times daily would consume
+                            <span
+                                class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">7,500</span>
+                            operations monthly.
+                        </p>
+
+                        <div
+                            class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                            <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                                data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                                <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                Key Insight: Make.com offers five pricing tiers, all based on workspace rather than user
+                                count, providing significant cost advantages over per-user models.
+                            </p>
+                        </div>
+                    </div>
+
+                    <img src="https://cdn.qwenlm.ai/wV1eg6a65adfa178d8c91000f0ac74a89/4c0b5e65-3745-47ac-b34a-72b55bf532e6/42c693db-3825-493b-ae9a-a958940ce038.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoid1YxZWc2YTY1YWRmYTE3OGQ4YzkxMDAwZjBhYzc0YTg5IiwicmVzb3VyY2VfaWQiOiI0YzBiNWU2NS0zNzQ1LTQ3YWMtYjM0YS03MmI1NWJmNTMyZTYiLCJyZXNvdXJjZV9jaGF0X2lkIjpudWxsfQ.T0icQrRcwHeiQcYxSS1QAYe97YF-sN2XXhUQ3UqfPfk"
+                        alt="Technical architecture diagram showing a central blue hexagonal node labeled 'Make.com Orchestrator' in #1a73b3 color at center, surrounded by four circular nodes arranged in a diamond pattern: top node 'WhatsApp Cloud API' in green #10b981, right node 'Cal.com Scheduler' in purple #8b5cf6, bottom node 'Slack Communications' in orange #f97316, left node 'Data Storage' in gray #6b7280. Connecting lines are gradient strokes transitioning from blue to purple. Each node has small icons: WhatsApp logo, calendar icon, Slack logo, database icon. Background is clean white with subtle grid lines. All text is sans-serif, dark gray #374151, with bold headers. The diagram emphasizes data flow between components with arrow indicators showing bidirectional communication pathways."
+                        class="w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300" />
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300">Pricing Tiers &amp;
+                        Operational Limits</h3>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="card-interactive p-6 bg-primary-50/50 dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-3"
+                                data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">Free Tier
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span><strong>1,000 operations/month</strong> - sufficient for 200-300 simple
+                                        workflow runs</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span>Basic app connectivity and scheduling capabilities</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span>Suitable for small-scale testing and prototyping</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-interactive p-6 bg-accent-50/50 dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-3"
+                                data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">Core Plan
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span><strong>$10.59/month</strong> for 10,000 operations</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span>Ideal for most SMBs and medium-scale deployments</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span>Supports 500+ workflow runs daily with complex scenarios</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-interactive p-6 bg-primary-50/50 dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-3"
+                                data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">Pro Plan</h4>
+                            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span><strong>$18.82/month</strong> with faster scheduling</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span>Priority execution and custom variables</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span>Higher rate limits: 120 requests per minute</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-interactive p-6 bg-accent-50/50 dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-3"
+                                data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">Teams Plan
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span><strong>$34.12/month</strong> per user</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span>Collaboration features and role management</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i data-lucide="circle-check"
+                                        class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                    <span>Enhanced rate limits: 240 requests per minute</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed"
+                            data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                            <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            Cost Optimization: Make.com is significantly more cost-effective than competitors like
+                            Zapier, typically being 3-5 times cheaper at equivalent volumes due to per-workspace pricing
+                            and inclusion of all apps without premium connector fees.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Free-Tool Stack Analysis Section -->
+        <section id="stack" class="py-20 bg-primary-50/50 dark:bg-gray-800" data-aos="fade-up">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300">
+                    Free-Tool Stack Stress Testing
+                </h2>
+
+                <div class="hs-accordion-group space-y-4">
+                    <!-- WhatsApp Business API Section -->
+                    <div
+                        class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <button
+                            class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl"
+                            id="hs-whatsapp-heading">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="message-square"
+                                        class="w-6 h-6 text-green-600 dark:text-green-400"></i>
+                                </div>
+                                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">WhatsApp
+                                    Business API</span>
+                            </div>
+                            <i data-lucide="chevron-down"
+                                class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                        </button>
+                        <div id="hs-whatsapp-collapse"
+                            class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
+                            aria-labelledby="hs-whatsapp-heading">
+                            <div class="p-6 pt-0 space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://blueticks.co/blog/whatsapp-business-api-pricing-2026|35">
+                                    At
+                                    <span
+                                        class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$0.025</span>
+                                    per message in the US, sending
+                                    <span
+                                        class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">100,000</span>
+                                    marketing messages costs
+                                    <span
+                                        class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$2,500</span>
+                                    in Meta fees alone.
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://www.unipile.com/whatsapp-business-api-pricing/|37">
+                                    Prices can vary from
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$0.005</span>
+                                    to
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$0.05</span>
+                                    per conversation, with the first
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">1,000</span>
+                                    user-initiated messages per month free.
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://getkanal.com/blog/whatsapp-business-pricing-guide|42">
+                                    WhatsApp Business API charges per
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">24-hour
+                                        conversation</span>
+                                    (roughly $0.025 for marketing, $0.015 for utility). Marketing conversations cost
+                                    ~$0.025, utility ~$0.015.
+                                </p>
+
+                                <div
+                                    class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                                    <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                                        data-ref="https://api-pricing.azure.tsu.edu/|41">
+                                        <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                        Cost Breakdown: Marketing conversations range from $0.0099 to $0.0858, Utility
+                                        from $0.0042 to $0.0311, and Authentication from $0.0034 to $0.0269 per
+                                        conversation depending on country and category.
+                                    </p>
+                                </div>
+
+                                <div
+                                    class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+                                    <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed"
+                                        data-ref="https://www.quora.com/Are-there-any-hidden-fees-in-WhatsApp-for-Business-API-pricing|40">
+                                        <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                        Regulatory Costs: Some businesses may incur costs tied to compliance with
+                                        regional regulations. All messages responded to within 24 hours are free, but
+                                        beyond that timeframe, charges apply.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cal.com Scheduling Section -->
+                    <div
+                        class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <button
+                            class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl"
+                            id="hs-cal-heading">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="calendar" class="w-6 h-6 text-purple-600 dark:text-purple-400"></i>
+                                </div>
+                                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Cal.com
+                                    Scheduling Platform</span>
+                            </div>
+                            <i data-lucide="chevron-down"
+                                class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                        </button>
+                        <div id="hs-cal-collapse"
+                            class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
+                            aria-labelledby="hs-cal-heading">
+                            <div class="p-6 pt-0 space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://vocus.io/blog/calendly-alternatives|25">
+                                    Cal.com is the open-source heavyweight in the scheduling space. The codebase is on
+                                    GitHub, you can self-host it, and the cloud version has a generous free tier.
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://agiled.app/blog/best-scheduling-software-for-writers|26">
+                                    <strong>Pricing (April 2026):</strong> Free (1 user, unlimited events, paid bookings
+                                    included). Teams
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$15/user/month</span>.
+                                    Organizations
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$37/user/month</span>.
+                                    Self-hosted is free (you pay for infrastructure).
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://zapier.com/blog/best-meeting-scheduler-apps/|27">
+                                    Calendly pricing: Free for meeting polls and 1 one-on-one booking link. Standard
+                                    plan at
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$12/month</span>
+                                    unlocks multiple booking links, booking page.
+                                </p>
+
+                                <div
+                                    class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                                    <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                                        data-ref="https://zeeg.me/en/blog/post/cal-com-pricing|86">
+                                        <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                        Self-Hosting Advantage: Self-hosted 'free' plan requires server infrastructure
+                                        ($5-50+/month) but eliminates per-user licensing costs for large teams.
+                                    </p>
+                                </div>
+
+                                <div
+                                    class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+                                    <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed"
+                                        data-ref="https://schedly.io/alternatives/cal-com|91">
+                                        <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                        Technical Complexity: Self-hosting requires a server environment (cloud hosting
+                                        costs $30–200/month depending on scale), database management, and software
+                                        updates (Cal.com releases updates frequently).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slack Communications Section -->
+                    <div
+                        class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <button
+                            class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl"
+                            id="hs-slack-heading">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="hash" class="w-6 h-6 text-orange-600 dark:text-orange-400"></i>
+                                </div>
+                                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Slack
+                                    Communications Hub</span>
+                            </div>
+                            <i data-lucide="chevron-down"
+                                class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                        </button>
+                        <div id="hs-slack-collapse"
+                            class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
+                            aria-labelledby="hs-slack-heading">
+                            <div class="p-6 pt-0 space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://www.boltic.io/blog/top-7-use-cases-for-slack-notification-automation-in-2025|14">
+                                    Slack's core native automation tool is Workflow Builder, a no-code, drag-and-drop
+                                    interface that allows users to create automated sequences. It operates by defining
+                                    triggers (e.g., form submission, emoji reaction) and subsequent steps (e.g., sending
+                                    a message, gathering data, integrating with other apps).
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://www.boltic.io/blog/top-7-use-cases-for-slack-notification-automation-in-2025|14">
+                                    In 2026, Slack introduced AI-powered recommendations within its Workflow Builder.
+                                    The system analyzes a team's existing automation usage to provide suggestions for
+                                    new triggers, actions, and integration steps, making workflow creation more
+                                    intuitive and faster.
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://docs.slack.dev/apis/web-api/rate-limits|107">
+                                    Slack platform features and APIs rely on rate limits to help provide a predictably
+                                    pleasant experience for users. These limits prevent abuse and ensure system
+                                    stability during peak usage periods.
+                                </p>
+
+                                <div
+                                    class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                                    <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                                        data-ref="https://www.boltic.io/blog/top-7-use-cases-for-slack-notification-automation-in-2025|14">
+                                        <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                        Extensive Integrations: Slack supports sophisticated multi-step workflows using
+                                        conditional logic and custom forms, with thousands of app integrations including
+                                        Google Drive, Jira, Notion, HubSpot, Zendesk, and Trello.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pl-4 pr-3 py-3 border-l-4 border-red-500 bg-red-50/40 dark:bg-red-900/30 rounded-r-lg">
+                    <p class="text-sm font-medium text-red-900 dark:text-red-100 leading-relaxed"
+                        data-ref="https://www.humanly.io/blog/why-ai-recruiting-breaks-2026-failure-modes|4">
+                        <i data-lucide="triangle-alert" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                        Critical Failure Mode: Most "AI recruiting" failures are not due to flawed AI models but are
+                        systemic design flaws including split truth (fragmented candidate journeys), identity drift
+                        (duplicate records), unowned rules (inconsistent routing logic), and the ghosting machine
+                        (automation that creates activity but fails to complete tasks).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing & Rate Limits Section -->
+        <section id="pricing" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300">
+                    Pricing Models &amp; Rate Limits
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="card-interactive p-6 bg-primary-50/50 dark:bg-gray-800 rounded-xl shadow-md">
+                        <h3 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-4"
+                            data-ref="https://developers.make.com/api-documentation/getting-started/rate-limiting|103">
+                            Make.com Rate Limits</h3>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Core:</strong> 60 requests per minute</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Pro:</strong> 120 requests per minute</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Teams:</strong> 240 requests per minute</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Enterprise:</strong> 1,000 requests per minute</span>
+                            </li>
+                        </ul>
+
+                        <div
+                            class="mt-4 pl-3 py-2 border-l-4 border-primary-500 bg-primary-100/40 dark:bg-primary-900/30 rounded-r">
+                            <p class="text-xs text-primary-800 dark:text-primary-200">
+                                Default webhook limit: 30 per second. Implement exponential backoff and retry patterns
+                                for robust API integration.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card-interactive p-6 bg-accent-50/50 dark:bg-gray-800 rounded-xl shadow-md">
+                        <h3 class="text-xl font-semibold text-accent-700 dark:text-accent-300 mb-4"
+                            data-ref="https://cal.com/docs/api-reference/v2/introduction|166">Cal.com API Limits</h3>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Default:</strong> 120 requests per minute without authentication</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Best Practice:</strong> Use exponential backoff and retry mechanisms when
+                                    encountering rate limit errors</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Monitoring:</strong> Stay well below rate limits and implement usage
+                                    tracking</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>API v1 Deprecation:</strong> Discontinued February 15, 2026</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300">WhatsApp API Throughput
+                        &amp; Webhook Performance</h3>
+
+                    <div
+                        class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                        <p class="text-gray-700 dark:text-gray-300 mb-4"
+                            data-ref="https://www.wuseller.com/whatsapp-business-knowledge-hub/scale-whatsapp-cloud-api-master-throughput-limits-upgrades-2026|109">
+                            To handle webhook failures, ensure your server responds quickly. Keep median latency under
+                            <span
+                                class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">250ms</span>.
+                            Limit: Less than
+                            <span
+                                class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">1%</span>
+                            should exceed 1 second.
+                        </p>
+
+                        <p class="text-gray-700 dark:text-gray-300 mb-4"
+                            data-ref="https://increase.com/documentation/webhooks|169">
+                            Webhook delivery is considered successful only if your endpoint returns a
+                            <span
+                                class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">2xx</span>
+                            status code within
+                            <span
+                                class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">10
+                                seconds</span>.
+                            Any other response (4xx, 5xx, connection timeouts) will be treated as failure.
+                        </p>
+
+                        <div
+                            class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                            <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                                data-ref="https://www.wuseller.com/whatsapp-business-knowledge-hub/scale-whatsapp-cloud-api-master-throughput-limits-upgrades-2026|109">
+                                <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                Cloud API Performance: Consistently experiences 99.9% uptime and &lt; 5 seconds p99
+                                latency, making it suitable for mission-critical hiring communications.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed"
+                            data-ref="https://github.com/chatwoot/chatwoot/issues/13961|174">
+                            <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            Performance Threshold: Meta's Cloud API at a rate of at least 80 messages per second (MPS)
+                            without internal worker crashes or premature rate limiting. Exceeding this threshold may
+                            require load balancing strategies.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Privacy & Security Section -->
+        <section id="privacy" class="py-20 bg-primary-50/50 dark:bg-gray-800" data-aos="fade-up">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300">
+                    Data Privacy &amp; Security Framework
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-8 items-center mb-12">
+                    <img src="https://cdn.qwenlm.ai/wV1eg6a65adfa178d8c91000f0ac74a89/4c0b5e65-3745-47ac-b34a-72b55bf532e6/843ac20b-e02d-47f5-ae4a-57c614d5167e.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoid1YxZWc2YTY1YWRmYTE3OGQ4YzkxMDAwZjBhYzc0YTg5IiwicmVzb3VyY2VfaWQiOiI0YzBiNWU2NS0zNzQ1LTQ3YWMtYjM0YS03MmI1NWJmNTMyZTYiLCJyZXNvdXJjZV9jaGF0X2lkIjpudWxsfQ.T0icQrRcwHeiQcYxSS1QAYe97YF-sN2XXhUQ3UqfPfk"
+                        alt="Data privacy compliance diagram featuring a central shield icon in blue #1a73b3 with lock symbol, surrounded by four circular nodes: top left 'GDPR Compliance' in green #10b981 with EU flag icon, top right 'EU-US DPF' in purple #8b5cf6 with transatlantic bridge icon, bottom left 'Consent Management' in orange #f97316 with checkmark icon, bottom right 'Audit Trail' in gray #6b7280 with document icon. Connecting arrows show data flow between nodes with dotted lines indicating cross-border transfers. Background is light gray #f3f4f6 with subtle grid pattern. All text is sans-serif, dark gray #374151, with bold headers. The diagram emphasizes regulatory frameworks and data protection measures."
+                        class="w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300" />
+
+                    <div class="space-y-6">
+                        <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300">GDPR &amp; Automated
+                            Decision-Making</h3>
+
+                        <p class="text-gray-700 dark:text-gray-300"
+                            data-ref="https://www.techtimes.com/articles/319901/20260708/automated-hiring-rejections-may-already-break-eu-law-privacy-regulators-warn-tomorrow.htm|18">
+                            GDPR Article 22 prohibits automated hiring decisions that lack genuine human involvement. If
+                            an AI tool screens out candidates and no qualified human reviews the decision, it may
+                            violate EU law.
+                        </p>
+
+                        <p class="text-gray-700 dark:text-gray-300" data-ref="https://gdpr-info.eu/art-22-gdpr/|71">
+                            The data subject shall have the right not to be subject to a decision based solely on
+                            automated processing, including profiling, which produces legal effects or similarly
+                            significant effects on individuals.
+                        </p>
+
+                        <div
+                            class="pl-4 pr-3 py-3 border-l-4 border-red-500 bg-red-50/40 dark:bg-red-900/30 rounded-r-lg">
+                            <p class="text-sm font-medium text-red-900 dark:text-red-100 leading-relaxed"
+                                data-ref="https://www.techtimes.com/articles/320141/20260711/automated-hiring-has-broken-gdpr-article-22-since-2018-eu-regulators-confirm.htm|73">
+                                <i data-lucide="triangle-alert" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                Critical Deadline: GDPR Article 22 automated hiring compliance has been enforceable
+                                since May 2018. EU regulators confirmed that automated hiring systems must include human
+                                oversight mechanisms.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300">EU-U.S. Data Privacy
+                        Framework</h3>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-3"
+                                data-ref="https://www.whatsapp.com/legal/business-data-transfer-addendum|11">WhatsApp
+                                Data Transfer</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                WhatsApp Ireland relies on the EU-U.S. Data Privacy Framework for transfers of European
+                                data to WhatsApp LLC in the US as set out in WhatsApp's Data Processing Agreement.
+                            </p>
+                        </div>
+
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-3"
+                                data-ref="https://www.bytebacklaw.com/2025/09/eu-court-upholds-data-privacy-framework-despite-challenge-implications-for-transatlantic-data-transfers/|148">
+                                Legal Validity</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                The EU General Court's September 3rd ruling confirms that personal data transfers to
+                                U.S. organizations certified under the DPF can continue without additional safeguards.
+                            </p>
+                        </div>
+
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-3"
+                                data-ref="https://auditsuisse.com/cross-border-data-transfers-us-eu-uk-guide|157">
+                                Framework Status 2026</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                The DPF adequacy decision (10 July 2023) remains in force. The EU General Court upheld
+                                the Data Privacy Framework despite legal challenges, confirming its validity for
+                                cross-border data transfers.
+                            </p>
+                        </div>
+
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-3"
+                                data-ref="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/international-transfers/adequacy-regulations/how-does-the-uk-extension-to-the-eu-us-data-privacy-framework-work/|147">
+                                UK Extension</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                The UK Extension to the EU-US Data Privacy Framework refers to the UK's adequacy
+                                regulations for the US. The UK Extension is a partial adequacy finding, requiring
+                                additional safeguards for certain transfers.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                            data-ref="https://termly.io/resources/articles/data-processing-agreement/|16">
+                            <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            Data Processing Agreement (DPA): A legally required contract between data controllers and
+                            processors outlining rights and obligations for data processing activities. Essential for
+                            WhatsApp and Slack integrations.
+                        </p>
+                    </div>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed"
+                            data-ref="https://topsourceworldwide.com/insights/how-does-gdpr-affect-cross-border-employment-topsource-worldwide/|31">
+                            <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            Compliance Scope: GDPR applies to any organization that collects or processes the personal
+                            data of individuals residing in the European Union, regardless of the company's location.
+                            Fines can reach up to €20 million or 4% of global revenue, whichever is greater.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scalability & Operational Resilience Section -->
+        <section id="scalability" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300">
+                    Scalability &amp; Operational Resilience
+                </h2>
+
+                <div class="space-y-6 mb-12">
+                    <p class="text-lg text-gray-700 dark:text-gray-300"
+                        data-ref="https://www.phenom.com/press-release/phenom-ai-state-of-hiring|2">
+                        A Phenom/Aptitude Research benchmark report reveals that
+                        <span
+                            class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">94%</span>
+                        of companies do not offer automated interview scheduling inline during the job application flow.
+                        This lack of immediate qualification is a primary cause of candidate drop-off, as most
+                        post-application interactions occur days later when engagement has already peaked.
+                    </p>
+
+                    <p class="text-lg text-gray-700 dark:text-gray-300"
+                        data-ref="https://www.pin.com/blog/applicant-drop-off-rates/|3">
+                        According to iCIMS's 2025 State of Frontline Hiring Report,
+                        <span
+                            class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">60%</span>
+                        of job seekers who start a job application never finish it. The primary reasons cited are
+                        lengthy forms (50%) and missing salary information (31%).
+                    </p>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                            data-ref="https://hiredaiapp.com/the-hidden-cost-of-slow-hiring-what-every-recruiter-needs-to-know-in-2026/|6">
+                            <i data-lucide="trending-up" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            Productivity Impact: Unfilled roles cost companies an average of $500 per day in lost
+                            productivity. The average time-to-hire has stretched to approximately 42–44 days, with the
+                            full application-to-offer timeline at 68.5 days.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="hs-accordion-group space-y-4">
+                    <!-- Error Handling Section -->
+                    <div
+                        class="hs-accordion card-interactive bg-primary-50/50 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <button
+                            class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl"
+                            id="hs-error-heading">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="octagon-alert" class="w-6 h-6 text-red-600 dark:text-red-400"></i>
+                                </div>
+                                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Error
+                                    Handling &amp; Recovery Patterns</span>
+                            </div>
+                            <i data-lucide="chevron-down"
+                                class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                        </button>
+                        <div id="hs-error-collapse"
+                            class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
+                            aria-labelledby="hs-error-heading">
+                            <div class="p-6 pt-0 space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                                    Make.com provides robust error handling patterns to ensure workflow resilience. A
+                                    key feature is adding an 'error handler' to any module, which can be configured to
+                                    'Resume' (retry on transient failures), 'Rollback' (undo previous actions), or
+                                    'Break' (stop the scenario).
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                                    To handle rate-limited APIs, Make.com supports a 'Sleep + retry pattern'. This
+                                    involves inserting Sleep modules with exponential backoff logic into the workflow,
+                                    combined with an error handler set to 'Resume', allowing the system to gracefully
+                                    degrade when API rate limits are hit.
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://api.marketplacer.com/docs/webhooks/webhookretries/|168">
+                                    The maximum interval between retries is
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">4
+                                        days</span>.
+                                    The default is
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">25
+                                        retries</span>.
+                                    The permitted range is from 1 to 50 retries. Retries will stop 30 days after the
+                                    initial attempt.
+                                </p>
+
+                                <div
+                                    class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+                                    <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed"
+                                        data-ref="https://community.make.com/t/error-429/106084|153">
+                                        <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                        Rate Limit Errors: Error 429 usually isn't about total credits, it's a rate
+                                        limit issue. It happens when too many requests are sent within a short time,
+                                        especially with APIs. Implement proper backoff strategies to avoid cascading
+                                        failures.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Log Retention Section -->
+                    <div
+                        class="hs-accordion card-interactive bg-primary-50/50 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <button
+                            class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl"
+                            id="hs-log-heading">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-6 h-6 text-yellow-600 dark:text-yellow-400"></i>
+                                </div>
+                                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Execution Log
+                                    Management</span>
+                            </div>
+                            <i data-lucide="chevron-down"
+                                class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                        </button>
+                        <div id="hs-log-collapse"
+                            class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
+                            aria-labelledby="hs-log-heading">
+                            <div class="p-6 pt-0 space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                                    By default, input/output data from every module run is stored for
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">30-90
+                                        days</span>.
+                                    For high-security use cases, this retention must be disabled within the scenario
+                                    settings.
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                                    Data Store fields are not encrypted, so sensitive credentials should be managed via
+                                    secure Connections instead. This is critical for protecting candidate PII and
+                                    ensuring compliance with data protection regulations.
+                                </p>
+
+                                <div
+                                    class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                                    <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                                        data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                                        <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                        Security Certifications: Make.com holds SOC 2 Type II certification, ISO 27001
+                                        compliance, and GDPR readiness. It offers EU data residency on Enterprise plans
+                                        and HIPAA compliance on its highest-tier plan.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Candidate Drop-off Mitigation -->
+                    <div
+                        class="hs-accordion card-interactive bg-primary-50/50 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <button
+                            class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl"
+                            id="hs-dropoff-heading">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="user-x" class="w-6 h-6 text-blue-600 dark:text-blue-400"></i>
+                                </div>
+                                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Candidate
+                                    Drop-off Prevention</span>
+                            </div>
+                            <i data-lucide="chevron-down"
+                                class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                        </button>
+                        <div id="hs-dropoff-collapse"
+                            class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
+                            aria-labelledby="hs-dropoff-heading">
+                            <div class="p-6 pt-0 space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://www.pin.com/blog/applicant-drop-off-rates/|3">
+                                    The interview stage is the single largest point of candidate drop-off, accounting
+                                    for
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">32%</span>
+                                    of all talent loss in the hiring funnel, more than application abandonment,
+                                    scheduling delays, and onboarding combined.
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://www.pin.com/blog/applicant-drop-off-rates/|3">
+                                    Application length has a significant impact on completion rates: applications under
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">5
+                                        minutes</span>
+                                    have a
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">12.47%</span>
+                                    completion rate, while those over
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">15
+                                        minutes</span>
+                                    see only a
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">3.61%</span>
+                                    completion rate.
+                                </p>
+
+                                <p class="text-gray-700 dark:text-gray-300"
+                                    data-ref="https://www.talentmsh.com/insights/candidate-experience-statistics|9">
+                                    Candidate drop-off is a significant challenge, with
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">61%</span>
+                                    of job seekers reporting being ghosted after an interview, and
+                                    <span
+                                        class="mx-1 px-1.5 py-0.05 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">38%</span>
+                                    of candidates having been ghosted within the last year.
+                                </p>
+
+                                <div
+                                    class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                                    <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                                        data-ref="https://www.talentmsh.com/insights/candidate-experience-statistics|9">
+                                        <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                                        Service Level Objectives (SLOs): First response within two business days of
+                                        application, feedback to all finalists within five business days of a decision,
+                                        and exit pulse surveys after each process.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Future-Proofing & Compliance Section -->
+        <section id="compliance" class="py-20 bg-accent-50/50 dark:bg-gray-800" data-aos="fade-up">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl font-bold mb-8 text-accent-700 dark:text-accent-300">
+                    Future-Proofing &amp; Regulatory Compliance
+                </h2>
+
+                <div class="space-y-6 mb-12">
+                    <p class="text-lg text-gray-700 dark:text-gray-300"
+                        data-ref="https://www.hklaw.com/en/insights/publications/2026/04/us-companies-face-eu-ai-acts-possible-august-2026-compliance-deadline|44">
+                        The European Union Artificial Intelligence Act (EU AI Act) has been implemented in phases since
+                        February 2025. Most remaining provisions for high-risk AI systems are scheduled to take effect
+                        on August 2, 2026. However, key compliance deadlines have recently been delayed by the European
+                        Parliament to December 2027, with further delays to August 2028 for sector-specific obligations.
+                    </p>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-accent-500 bg-accent-50/40 dark:bg-accent-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-accent-900 dark:text-accent-100 leading-relaxed"
+                            data-ref="https://www.morganlewis.com/pubs/2026/06/eu-approves-delays-and-other-amendments-to-certain-eu-ai-act-obligations-what-businesses-should-know|45">
+                            <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            Deadline Extension: The European Parliament granted final approval to amendments that delay
+                            key obligations for high-risk AI systems. The effective date for these obligations has been
+                            pushed from August 2, 2026, to December 2, 2027 (a 16-month delay).
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div
+                        class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                        <h3 class="text-xl font-semibold text-accent-700 dark:text-accent-300 mb-4"
+                            data-ref="https://labs.cloudsecurityalliance.org/research/csa-research-note-eu-ai-act-high-risk-compliance-deadline-20/|46">
+                            High-Risk AI Obligations</h3>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>CV Screening &amp; Hiring:</strong> Presumptively classified as high-risk
+                                    under Annex III</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Notification Requirements:</strong> Inform workers and their
+                                    representatives before deployment</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Automated Logs:</strong> Retain for at least six months</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Risk Suspension:</strong> Stop system use if risks to health, safety, or
+                                    fundamental rights are identified</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div
+                        class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                        <h3 class="text-xl font-semibold text-accent-700 dark:text-accent-300 mb-4"
+                            data-ref="https://responsibleailabs.ai/knowledge-hub/articles/eu-ai-act-august-2026-compliance|48">
+                            Penalty Structure</h3>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Tier 1 Violations:</strong> Up to 7% of global annual turnover (up to EUR
+                                    35M)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Tier 2 Violations:</strong> Up to 3% of global turnover</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Tier 3 Violations:</strong> Up to 1% of global turnover</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="arrow-right"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span><strong>Third-Party Certification:</strong> $50,000 or more per AI system</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-semibold text-accent-700 dark:text-accent-300">Cross-Border Employment
+                        Compliance</h3>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-3"
+                                data-ref="https://parakar.eu/knowledge/eu/remote-work-maturing-cross-border|30">
+                                Permanent Establishment Risk</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                Hiring a single remote employee in another EU country can trigger significant compliance
+                                liabilities, including retroactive payroll tax assessments, required corrections to
+                                social security contributions, penalties and interest charges, and corporate tax
+                                implications from permanent establishment risk.
+                            </p>
+                        </div>
+
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-3"
+                                data-ref="https://www.ews-limited.com/global-remote-work-trends-eor-compliance-2026/|32">
+                                Global Compliance Complexity</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                Requires adherence to local labor laws, health and safety requirements, native-language
+                                contracts, and personal data management. Regulators are more coordinated, and penalties
+                                for non-compliance can be business-threatening.
+                            </p>
+                        </div>
+
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-3"
+                                data-ref="https://ogletree.com/insights-resources/blog-posts/cross-border-remote-work-and-permanent-establishment-mitigating-risk-for-multinational-employers/|33">
+                                OECD Model Framework</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                Two-part framework with a 50% working time safe harbor. If an employee spends less than
+                                50% of their total working time in another treaty country over any twelve-month period,
+                                no PE arises.
+                            </p>
+                        </div>
+
+                        <div
+                            class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-800 rounded-xl shadow-md">
+                            <h4 class="text-lg font-semibold text-accent-700 dark:text-accent-300 mb-3"
+                                data-ref="https://www.safeguardglobal.com/resources/blog/data-privacy-global-hiring-gdpr-compliance-guide/|34">
+                                Data Transfer Mechanisms</h4>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                Companies must use legal mechanisms such as Standard Contractual Clauses (SCCs) if the
+                                destination country lacks an adequacy decision. Required to conduct Data Transfer Impact
+                                Assessments (DTIAs) to evaluate risks in the destination country's legal environment.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                            data-ref="https://www.safeguardglobal.com/resources/blog/data-privacy-global-hiring-gdpr-compliance-guide/|34">
+                            <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            EOR Solution: Employer of Record solutions can significantly reduce global data privacy risk
+                            by acting as the legal employer in each country. The EOR assumes responsibility for
+                            processing employee data in compliance with local regulations, handles international
+                            payroll, and reduces the need for complex cross-border data transfers.
+                        </p>
+                    </div>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed"
+                            data-ref="https://labs.cloudsecurityalliance.org/research/csa-research-note-eu-ai-act-high-risk-compliance-deadline-20/|46">
+                            <i data-lucide="alert-triangle" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            Readiness Gap: Over half of enterprises lack systematic inventories of the AI systems they
+                            operate. Bringing high-risk AI systems into conformity with the EU AI Act will require
+                            initial investments of $8–15 million for large enterprises and $2–5 million for mid-size
+                            organizations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conclusion Section -->
+        <section id="conclusion" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+            <div class="max-w-6xl mx-auto px-6">
+                <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300">
+                    Conclusion &amp; Implementation Roadmap
+                </h2>
+
+                <div class="space-y-6 mb-12">
+                    <p class="text-lg text-gray-700 dark:text-gray-300"
+                        data-ref="https://templates4make.co/guides/complete-guide-make-com.html|1">
+                        The bulletproof hiring automation architecture for July 2026 centers on Make.com as the
+                        orchestration engine, leveraging its cost-effective operations-based pricing model and robust
+                        error handling capabilities. The architecture integrates WhatsApp Business API for candidate
+                        communications, Cal.com for scheduling, and Slack for team coordination, while maintaining full
+                        GDPR compliance through the EU-U.S. Data Privacy Framework.
+                    </p>
+
+                    <p class="text-lg text-gray-700 dark:text-gray-300"
+                        data-ref="https://www.humanly.io/blog/why-ai-recruiting-breaks-2026-failure-modes|4">
+                        Success depends on addressing systemic design flaws including split truth, identity drift,
+                        unowned rules, and the ghosting machine. Implementing a single source of truth, robust identity
+                        resolution, owned rule systems, and completion-first design philosophy will ensure candidate
+                        engagement and minimize drop-off rates.
+                    </p>
+
+                    <div
+                        class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                        <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                            data-ref="https://www.hklaw.com/en/insights/publications/2026/04/us-companies-face-eu-ai-acts-possible-august-2026-compliance-deadline|44">
+                            <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                            Critical Timeline: The EU AI Act's most consequential obligations take effect on August 2,
+                            2026 (potentially delayed to December 2027). AI systems used for employment functions are
+                            explicitly classified as 'high-risk', requiring comprehensive compliance investments ranging
+                            from $2–15 million depending on organization size.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card-interactive p-6 bg-primary-50/50 dark:bg-gray-800 rounded-xl shadow-md">
+                        <h3 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-4">Immediate Actions
+                            (Q3-Q4 2026)</h3>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Deploy Make.com Core plan ($10.59/month) with 10,000 operations</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Implement WhatsApp Business API with template-based messaging</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Set up Cal.com Teams plan ($15/user/month) with collective scheduling</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Configure Slack Workflow Builder with rate limit handling</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Establish data processing agreements with all vendors</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="card-interactive p-6 bg-accent-50/50 dark:bg-gray-800 rounded-xl shadow-md">
+                        <h3 class="text-xl font-semibold text-accent-700 dark:text-accent-300 mb-4">Strategic Milestones
+                            (2026-2027)</h3>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Achieve GDPR Article 22 compliance with human oversight mechanisms</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Scale to Make.com Teams plan ($34.12/user/month) for enterprise features</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Implement EU AI Act compliance for high-risk recruitment systems</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Deploy cross-border employment framework with EOR solutions</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="circle-check"
+                                    class="w-4 h-4 text-accent-600 dark:text-accent-400 mr-2 mt-0.5 flex-shrink-0"></i>
+                                <span>Establish automated SLOs with first response within 2 business days</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-12 pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                    <p class="text-base font-medium text-primary-900 dark:text-primary-100 leading-relaxed"
+                        data-ref="https://www.talentmsh.com/insights/candidate-experience-statistics|9">
+                        <i data-lucide="lightbulb" class="inline-block w-5 h-5 mr-2 -mt-0.5"></i>
+                        Final Recommendation: To improve candidate experience, simplify the application process,
+                        communicate proactively with automated but personalized messages, train interviewers on
+                        structured interviews, and streamline onboarding to improve new hire retention by 82%.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer
+        class="bg-primary-900 dark:bg-gray-950 text-gray-300 py-12 border-t border-primary-700 dark:border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-primary-300 dark:text-primary-400 mb-4">About This Research
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        Comprehensive analysis of hiring automation architecture for July 2026, focusing on scalability,
+                        cost efficiency, and regulatory compliance.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-primary-300 dark:text-primary-400 mb-4">Key Technologies</h3>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li>• Make.com Orchestration</li>
+                        <li>• WhatsApp Business API</li>
+                        <li>• Cal.com Scheduling</li>
+                        <li>• Slack Communications</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-primary-300 dark:text-primary-400 mb-4">Regulatory Focus</h3>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li>• GDPR Article 22</li>
+                        <li>• EU AI Act 2026</li>
+                        <li>• EU-U.S. Data Privacy Framework</li>
+                        <li>• Cross-Border Employment Laws</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-primary-800 dark:border-gray-800 pt-8 text-center">
+                <p class="text-sm text-gray-500">
+                    © 2026 Hiring Automation Research. Educational resource for technical architecture planning.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Citation System Script -->
+    <script>
+        function initCitationSystem() {
+            let i = 1, map = new Map();
+            document.querySelectorAll('[data-ref]').forEach(el => {
+                if (el.dataset.citationProcessed) return;
+                const raw = (el.getAttribute('data-ref') || '').trim();
+                if (!raw) return;
+
+                const parts = raw.split('|');
+                const url = parts[0].trim();
+                const idx = (parts[1] || '').trim() || map.get(raw) || (map.set(raw, String(i)), String(i++));
+
+                if (!el.textContent || !el.textContent.trim()) { el.dataset.citationProcessed = 'true'; return; }
+
+                const btn = document.createElement('sup'); btn.textContent = String(idx);
+                Object.assign(btn.style, { fontSize: '8px', color: '#fff', cursor: 'pointer', top: '1px', fontWeight: 'bold', backgroundColor: '#0284c7', borderRadius: '50%', transition: 'all .15s', userSelect: 'none', minWidth: '19px', height: '19px', marginLeft: '6px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 3px rgba(0,0,0,.2)', lineHeight: '1' });
+                btn.addEventListener('mouseenter', () => Object.assign(btn.style, { backgroundColor: '#0369a1', transform: 'scale(1.12)' }));
+                btn.addEventListener('mouseleave', () => Object.assign(btn.style, { backgroundColor: '#0284c7', transform: 'scale(1)' }));
+                btn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); window.open(url, '_blank'); });
+
+                el.appendChild(btn); el.dataset.citationProcessed = 'true';
+            });
+        }
+    </script>
+
+    <!-- Initialize Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize AOS
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100
+            });
+
+            // Initialize Lucide icons
+            lucide.createIcons();
+
+            // Initialize Preline components
+            setTimeout(() => {
+                window.HSStaticMethods.autoInit();
+            }, 100);
+
+            // Initialize citation system
+            initCitationSystem();
+
+            // Progress bar functionality
+            const progressBar = document.getElementById('progressBar');
+
+            function updateProgressBar() {
+                const scrollTop = window.pageYOffset;
+                const docHeight = document.body.scrollHeight - window.innerHeight;
+                const scrollPercent = (scrollTop / docHeight) * 100;
+                progressBar.style.width = scrollPercent + '%';
+            }
+
+            window.addEventListener('scroll', updateProgressBar);
+            updateProgressBar();
+
+            // Close mobile menu when clicking on a link
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    // Mobile menu close logic if needed
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

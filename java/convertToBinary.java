@@ -24,15 +24,20 @@ public class convertToBinary {
      decimalToBinary(x);
      System.out.print("Enter the binary number you want to convert to decimal: ");
      String r = sc.next();
-     int j = 1;
-     int sum = 0;
-     for ( int i = r.length()-1;i>=0;i--){ 
-         char k = r.charAt(i);
-         int bit = k - '0'; // Convert char '0' or '1' to int 0 or 1 as in string the value for 0 is 48 and for 1 is 49 
-         sum += bit * j; 
-         j *= 2;        
-     }
+     int sum = binaryToDecimal(r);
      System.out.println(sum);
      sc.close();
+    }
+
+    public static int binaryToDecimal(String r){
+        int j = 1;
+        int sum = 0;
+        for (int i = r.length() - 1; i >= 0; i--) {
+            char k = r.charAt(i);
+            int bit = k - '0'; // Convert char '0' or '1' to int 0 or 1
+            sum += bit * j;
+            j *= 2;
+        }
+        return sum;
     }
 }
