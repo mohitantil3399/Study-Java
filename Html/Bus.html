@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer System Bus Architecture | Interactive Visual Simulator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0B0F19',
+                            card: '#111827',
+                            border: '#1F2937',
+                            accent: '#3B82F6'
+                        },
+                        bus: {
+                            control: '#F59E0B',
+                            address: '#06B6D4',
+                            data: '#10B981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #07090e;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .glow-control { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+        .glow-address { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
+        .glow-data { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .pulse-subtle {
+            animation: pulse-border 2s infinite ease-in-out;
+        }
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgba(59, 130, 246, 0.3); }
+            50% { border-color: rgba(59, 130, 246, 0.8); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 002-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400">
+                        System Bus Interactive Visualizer
+                    </h1>
+                    <p class="text-xs text-gray-400">Master CPU, Memory & I/O Communication (Control, Address & Data Bus)</p>
+                </div>
+            </div>
+
+            <!-- Quick Navigation Badges -->
+            <div class="flex items-center gap-2 text-xs font-mono">
+                <span class="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    Control Bus
+                </span>
+                <span class="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                    Address Bus
+                </span>
+                <span class="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    Data Bus
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 space-y-8">
+
+        <!-- Hero Explainer Banner -->
+        <section class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-semibold">
+                        <span>💡 Concept Guide</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+                        How Computer Components Talk To Each Other
+                    </h2>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        A <strong class="text-cyan-300">System Bus</strong> is an electronic communication highway consisting of parallel wires that link the <strong class="text-white">CPU</strong>, <strong class="text-white">Main Memory (RAM)</strong>, and <strong class="text-white">Input/Output Devices</strong>. It operates using 3 specialized sub-buses:
+                    </p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                        <div class="p-3 rounded-xl bg-amber-950/20 border border-amber-500/20 hover:border-amber-500/50 transition">
+                            <h3 class="text-amber-400 text-xs font-bold font-mono uppercase tracking-wider mb-1">1. Control Bus (Bi-directional)</h3>
+                            <p class="text-gray-400 text-xs">Carries timing & operational signals like <code class="text-amber-300 font-mono">READ</code>, <code class="text-amber-300 font-mono">WRITE</code>, and <code class="text-amber-300 font-mono">INTERRUPT</code>.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-cyan-950/20 border border-cyan-500/20 hover:border-cyan-500/50 transition">
+                            <h3 class="text-cyan-400 text-xs font-bold font-mono uppercase tracking-wider mb-1">2. Address Bus (CPU $\rightarrow$ Devices)</h3>
+                            <p class="text-gray-400 text-xs">Carries the specific binary memory location or port address (e.g. <code class="text-cyan-300 font-mono">0x10AF</code>).</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-950/20 border border-emerald-500/20 hover:border-emerald-500/50 transition">
+                            <h3 class="text-emerald-400 text-xs font-bold font-mono uppercase tracking-wider mb-1">3. Data Bus (Bi-directional)</h3>
+                            <p class="text-gray-400 text-xs">Transfers the actual payload data bytes back and forth across components.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generated Bus Architecture Overview Image Card -->
+                <div class="relative group rounded-xl overflow-hidden border border-gray-700/60 bg-gray-900 shadow-2xl">
+                    <img src="./bus.png" alt="System Bus Architecture Artwork" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 flex flex-col justify-end">
+                        <span class="text-xs font-mono text-cyan-400 uppercase font-semibold">Architecture Visual</span>
+                        <p class="text-xs text-gray-300">Bi-directional Control & Data highways with Unidirectional Address lines.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Canvas Simulator Section -->
+        <section class="space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="flex h-3 w-3 relative">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </span>
+                        Interactive Live Signal Simulator
+                    </h2>
+                    <p class="text-xs text-gray-400">Select an operation below to see animated electrical pulses travel through the system bus</p>
+                </div>
+
+                <!-- Simulation Control Buttons -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="btn-read-ram" onclick="startSimulation('RAM_READ')" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-cyan-600/20 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Read RAM
+                    </button>
+                    <button id="btn-write-ram" onclick="startSimulation('RAM_WRITE')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        Write RAM
+                    </button>
+                    <button id="btn-io-read" onclick="startSimulation('IO_READ')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-amber-600/20 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                        I/O Keypress Read
+                    </button>
+                    <button id="btn-io-write" onclick="startSimulation('IO_WRITE')" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-purple-600/20 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        I/O Display Write
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="glass-panel rounded-2xl p-4 border border-gray-800 relative">
+                
+                <!-- Canvas Element -->
+                <div class="w-full overflow-hidden rounded-xl bg-slate-950/90 relative">
+                    <canvas id="busCanvas" class="w-full h-[450px] block cursor-crosshair"></canvas>
+                </div>
+
+                <!-- Simulation Settings Bar below canvas -->
+                <div class="mt-4 pt-4 border-t border-gray-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+                    
+                    <!-- Left: Custom Input Controls -->
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5">
+                            <label for="input-address" class="text-cyan-400 font-semibold">Address:</label>
+                            <input type="text" id="input-address" value="0x10FF" class="w-20 px-2 py-1 rounded bg-gray-900 border border-gray-700 text-cyan-300 focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <label for="input-data" class="text-emerald-400 font-semibold">Data Payload:</label>
+                            <input type="text" id="input-data" value="0x42 (66)" class="w-28 px-2 py-1 rounded bg-gray-900 border border-gray-700 text-emerald-300 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <!-- Center: Speed Control -->
+                    <div class="flex items-center gap-2 bg-gray-900/80 px-3 py-1.5 rounded-lg border border-gray-800">
+                        <span class="text-gray-400">Speed:</span>
+                        <button onclick="setSpeed(0.5)" class="speed-btn px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300">0.5x</button>
+                        <button onclick="setSpeed(1.0)" class="speed-btn px-2 py-0.5 rounded bg-cyan-600 text-white font-bold">1x</button>
+                        <button onclick="setSpeed(2.0)" class="speed-btn px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300">2x</button>
+                    </div>
+
+                    <!-- Right: Execution Status -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-400">State:</span>
+                        <span id="status-badge" class="px-2.5 py-1 rounded-full bg-gray-800 text-gray-300 font-semibold flex items-center gap-1">
+                            <span id="status-dot" class="w-2 h-2 rounded-full bg-gray-500"></span>
+                            <span id="status-text">READY</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Step-by-Step Execution Monitor & Line Inspector -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Step by Step Timeline -->
+            <div class="lg:col-span-2 glass-panel rounded-2xl p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Execution Protocol Timeline
+                    </h3>
+                    <span id="step-counter" class="text-xs font-mono text-cyan-400 font-bold bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-1 rounded-md">
+                        Step 0 / 4
+                    </span>
+                </div>
+
+                <!-- Steps Container -->
+                <div id="steps-container" class="space-y-3">
+                    <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 text-xs text-gray-400 flex items-center justify-between">
+                        <span>Select any simulation command above (e.g. <strong>Read RAM</strong>) to initiate step-by-step cycle tracking.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Bus Wire State Breakdown -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Bus Wire Electrical State
+                </h3>
+
+                <div class="space-y-3 font-mono text-xs">
+                    <!-- Control Bus State -->
+                    <div class="p-3 rounded-xl bg-amber-950/20 border border-amber-500/30 space-y-1">
+                        <div class="flex items-center justify-between text-amber-400 font-bold">
+                            <span>CONTROL BUS SIGNAL</span>
+                            <span id="wire-control-name">IDLE</span>
+                        </div>
+                        <div class="text-gray-400 text-[11px] flex items-center justify-between">
+                            <span>Lines: MEM_R / MEM_W / IO_R</span>
+                            <span id="wire-control-bin" class="text-amber-300">0000 0000</span>
+                        </div>
+                    </div>
+
+                    <!-- Address Bus State -->
+                    <div class="p-3 rounded-xl bg-cyan-950/20 border border-cyan-500/30 space-y-1">
+                        <div class="flex items-center justify-between text-cyan-400 font-bold">
+                            <span>ADDRESS BUS (16-Bit)</span>
+                            <span id="wire-address-hex">0x0000</span>
+                        </div>
+                        <div class="text-gray-400 text-[11px] flex items-center justify-between">
+                            <span>Binary Value:</span>
+                            <span id="wire-address-bin" class="text-cyan-300">0000 0000 0000 0000</span>
+                        </div>
+                    </div>
+
+                    <!-- Data Bus State -->
+                    <div class="p-3 rounded-xl bg-emerald-950/20 border border-emerald-500/30 space-y-1">
+                        <div class="flex items-center justify-between text-emerald-400 font-bold">
+                            <span>DATA BUS (8-Bit Payload)</span>
+                            <span id="wire-data-hex">0x00</span>
+                        </div>
+                        <div class="text-gray-400 text-[11px] flex items-center justify-between">
+                            <span>Binary Payload:</span>
+                            <span id="wire-data-bin" class="text-emerald-300">0000 0000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-gray-400">
+                    <span class="text-cyan-400 font-bold">💡 Note:</span> Unidirectional Address Bus prevents peripherals from dictating RAM locations to CPU.
+                </div>
+            </div>
+        </section>
+
+        <!-- Deep Dive Component Cards with Generated Visual Assets -->
+        <section class="space-y-4">
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                System Component Deep-Dive
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Component 1: CPU -->
+                <div class="glass-panel rounded-2xl overflow-hidden border border-gray-800 hover:border-cyan-500/50 transition group flex flex-col">
+                    <div class="h-44 overflow-hidden relative">
+                        <img src="./cpu.png" alt="CPU Microprocessor" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-bold">
+                            Bus Master
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-3 flex-grow flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-white">Central Processing Unit (CPU)</h3>
+                            <p class="text-gray-300 text-xs leading-relaxed">
+                                The master controller. Initiates memory operations by driving the Address Bus and Control Bus. Reads or writes byte data over the Data Bus.
+                            </p>
+                        </div>
+                        <ul class="text-xs text-gray-400 space-y-1 font-mono pt-2 border-t border-gray-800">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                Control Lines: Outgoing & Incoming
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                Address Lines: Outgoing only
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                Data Lines: Bi-directional
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Component 2: RAM Memory -->
+                <div class="glass-panel rounded-2xl overflow-hidden border border-gray-800 hover:border-emerald-500/50 transition group flex flex-col">
+                    <div class="h-44 overflow-hidden relative">
+                        <img src="./ram.png" alt="RAM Memory Modules" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold">
+                            Target Storage
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-3 flex-grow flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-white">Main Memory (RAM)</h3>
+                            <p class="text-gray-300 text-xs leading-relaxed">
+                                Organized as a large array of indexed byte locations. Listens to the Address Bus, decodes the targeted memory location, and performs Read or Write.
+                            </p>
+                        </div>
+                        <ul class="text-xs text-gray-400 space-y-1 font-mono pt-2 border-t border-gray-800">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                Address Decoding Matrix
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                Tri-State Buffers for Data Bus
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                Fast access (~50ns cycle)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Component 3: Input/Output -->
+                <div class="glass-panel rounded-2xl overflow-hidden border border-gray-800 hover:border-purple-500/50 transition group flex flex-col">
+                    <div class="h-44 overflow-hidden relative">
+                        <img src="./io.png" alt="Input Output Devices" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-purple-950/80 border border-purple-500/40 text-purple-300 text-xs font-mono font-bold">
+                            Peripherals
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-3 flex-grow flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-white">Input & Output (I/O)</h3>
+                            <p class="text-gray-300 text-xs leading-relaxed">
+                                Connects external hardware (keyboard, mouse, display, disk). Driven via I/O Port Addresses or Memory-Mapped I/O (MMIO).
+                            </p>
+                        </div>
+                        <ul class="text-xs text-gray-400 space-y-1 font-mono pt-2 border-t border-gray-800">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                                Interrupt Request Lines (IRQ)
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                                Dedicated I/O Controller Hub
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                                Port & Memory Mapping
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Interactive Calculator: Address Bus Width & Memory Capacity -->
+        <section class="glass-panel rounded-2xl p-6 space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        Bus Width & RAM Capacity Calculator
+                    </h2>
+                    <p class="text-xs text-gray-400">Understand how Address Bus width ($N$ lines) limits maximum addressable RAM space ($2^N$ bytes)</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Input: Address Bus Width -->
+                <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-2">
+                    <label for="calc-address-width" class="text-xs font-mono text-cyan-400 font-bold block">
+                        Address Bus Width ($N$ bits):
+                    </label>
+                    <input type="range" id="calc-address-width" min="8" max="64" step="8" value="32" oninput="updateCalculator()" class="w-full accent-cyan-500">
+                    <div class="flex justify-between text-xs text-gray-400 font-mono">
+                        <span>8-bit</span>
+                        <span id="val-address-bits" class="text-cyan-300 font-bold">32-bit</span>
+                        <span>64-bit</span>
+                    </div>
+                </div>
+
+                <!-- Input: Data Bus Width -->
+                <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-2">
+                    <label for="calc-data-width" class="text-xs font-mono text-emerald-400 font-bold block">
+                        Data Bus Width ($D$ bits):
+                    </label>
+                    <select id="calc-data-width" onchange="updateCalculator()" class="w-full px-3 py-2 rounded-lg bg-gray-950 border border-gray-700 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500">
+                        <option value="8">8-Bit (1 Byte per cycle)</option>
+                        <option value="16">16-Bit (2 Bytes per cycle)</option>
+                        <option value="32">32-Bit (4 Bytes per cycle)</option>
+                        <option value="64" selected>64-Bit (8 Bytes per cycle)</option>
+                    </select>
+                </div>
+
+                <!-- Output: Addressable Memory -->
+                <div class="p-4 rounded-xl bg-cyan-950/20 border border-cyan-500/30 space-y-1">
+                    <span class="text-xs font-mono text-cyan-400 font-bold block">MAX ADDRESSABLE RAM</span>
+                    <span id="calc-ram-result" class="text-xl font-extrabold text-white font-mono">4 GB</span>
+                    <p class="text-[11px] text-gray-400 font-mono">$2^{32} = 4,294,967,296$ Locations</p>
+                </div>
+
+                <!-- Output: Bus Bandwidth at 3.2 GHz -->
+                <div class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 space-y-1">
+                    <span class="text-xs font-mono text-emerald-400 font-bold block">PEAK BANDWIDTH (@ 3.2 GHz)</span>
+                    <span id="calc-bandwidth-result" class="text-xl font-extrabold text-white font-mono">25.6 GB/s</span>
+                    <p class="text-[11px] text-gray-400 font-mono">Formula: $F \times (D / 8)$ Bytes/s</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Interactive Quiz Section -->
+        <section class="glass-panel rounded-2xl p-6 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Test Your Knowledge: System Bus Quiz
+                </h2>
+                <p class="text-xs text-gray-400">Quickly verify your understanding of Address, Data, and Control bus dynamics.</p>
+            </div>
+
+            <div id="quiz-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Quiz Item 1 -->
+                <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
+                    <p class="text-xs font-semibold text-gray-200">1. Why is the Address Bus unidirectional (CPU $\rightarrow$ RAM/IO) while Data Bus is bidirectional?</p>
+                    <div class="space-y-1.5 text-xs font-mono">
+                        <button onclick="checkQuiz(1, 'A', this)" class="w-full text-left p-2.5 rounded bg-gray-950 hover:bg-gray-800 text-gray-300 transition">A. CPU always dictates which memory address to access; memory never requests CPU internal registers.</button>
+                        <button onclick="checkQuiz(1, 'B', this)" class="w-full text-left p-2.5 rounded bg-gray-950 hover:bg-gray-800 text-gray-300 transition">B. Address bus cables cannot carry signals backwards physically.</button>
+                    </div>
+                </div>
+
+                <!-- Quiz Item 2 -->
+                <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
+                    <p class="text-xs font-semibold text-gray-200">2. If a computer has a 16-bit Address Bus, what is its maximum memory limit?</p>
+                    <div class="space-y-1.5 text-xs font-mono">
+                        <button onclick="checkQuiz(2, 'A', this)" class="w-full text-left p-2.5 rounded bg-gray-950 hover:bg-gray-800 text-gray-300 transition">A. 16 Kilobytes (16 KB)</button>
+                        <button onclick="checkQuiz(2, 'B', this)" class="w-full text-left p-2.5 rounded bg-gray-950 hover:bg-gray-800 text-gray-300 transition">B. 64 Kilobytes ($2^{16} = 65,536$ bytes = 64 KB)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-gray-800 px-6 py-6 mt-12 text-center text-xs text-gray-500">
+        <p>Computer Architecture System Bus Interactive Visualization • Crafted with Vanilla JS & Tailwind CSS</p>
+    </footer>
+
+
+    <!-- Canvas & Animation JavaScript Script Tag -->
+    <script>
+        // Canvas Setup
+        const canvas = document.getElementById('busCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Dynamic Resize & DPI Handling
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // Simulation State
+        let activeOp = null; // 'RAM_READ', 'RAM_WRITE', 'IO_READ', 'IO_WRITE'
+        let currentStepIndex = 0;
+        let stepProgress = 0; // 0 to 1
+        let simSpeed = 1.0;
+        let isRunning = false;
+        let particles = [];
+
+        // Component Positions (Logical Grid 1000 x 450)
+        function getLayout(w, h) {
+            return {
+                cpu: { x: w * 0.18, y: h * 0.16, width: w * 0.20, height: h * 0.22, title: 'CPU', color: '#06B6D4' },
+                mem: { x: w * 0.50, y: h * 0.16, width: w * 0.20, height: h * 0.22, title: 'Memory (RAM)', color: '#10B981' },
+                io:  { x: w * 0.82, y: h * 0.16, width: w * 0.20, height: h * 0.22, title: 'Input & Output', color: '#A855F7' },
+
+                busBox: { x: w * 0.05, y: h * 0.52, width: w * 0.90, height: h * 0.40 },
+                controlBus: { y: h * 0.58, height: 26, title: 'Control Bus', color: '#F59E0B' },
+                addressBus: { y: h * 0.70, height: 26, title: 'Address Bus', color: '#06B6D4' },
+                dataBus:    { y: h * 0.82, height: 26, title: 'Data Bus',    color: '#10B981' }
+            };
+        }
+
+        // Operation Step Definitions
+        const OP_STEPS = {
+            'RAM_READ': [
+                {
+                    title: "1. Address Output",
+                    desc: "CPU outputs target memory address onto the Address Bus",
+                    from: 'cpu', bus: 'addressBus', to: 'mem',
+                    controlSig: "READ_REQ (0x01)", addressHex: "0x10FF", dataHex: "HIGH-Z",
+                    wires: { ctrl: "0000 0001", addr: "0001 0000 1111 1111", data: "0000 0000" }
+                },
+                {
+                    title: "2. Control Signal Issue",
+                    desc: "CPU sets MEM_READ active low signal on Control Bus",
+                    from: 'cpu', bus: 'controlBus', to: 'mem',
+                    controlSig: "MEM_READ (Active)", addressHex: "0x10FF", dataHex: "HIGH-Z",
+                    wires: { ctrl: "0000 0011", addr: "0001 0000 1111 1111", data: "0000 0000" }
+                },
+                {
+                    title: "3. RAM Decoding & Access",
+                    desc: "RAM decodes address 0x10FF and retrieves byte payload 0x42",
+                    from: 'mem', bus: 'controlBus', to: 'cpu',
+                    controlSig: "MEM_ACK (Ready)", addressHex: "0x10FF", dataHex: "0x42",
+                    wires: { ctrl: "0000 0111", addr: "0001 0000 1111 1111", data: "0100 0010" }
+                },
+                {
+                    title: "4. Data Transfer to CPU",
+                    desc: "RAM places byte 0x42 onto Data Bus; CPU reads payload into Accumulator register",
+                    from: 'mem', bus: 'dataBus', to: 'cpu',
+                    controlSig: "TRANSFER_COMPLETE", addressHex: "0x10FF", dataHex: "0x42",
+                    wires: { ctrl: "0000 0000", addr: "0000 0000 0000 0000", data: "0100 0010" }
+                }
+            ],
+            'RAM_WRITE': [
+                {
+                    title: "1. Address & Data Assertion",
+                    desc: "CPU asserts target address (0x10FF) on Address Bus and data (0x42) on Data Bus",
+                    from: 'cpu', bus: 'addressBus', to: 'mem',
+                    controlSig: "READY", addressHex: "0x10FF", dataHex: "0x42",
+                    wires: { ctrl: "0000 0000", addr: "0001 0000 1111 1111", data: "0100 0010" }
+                },
+                {
+                    title: "2. Write Control Pulse",
+                    desc: "CPU pulses MEM_WRITE line on Control Bus",
+                    from: 'cpu', bus: 'controlBus', to: 'mem',
+                    controlSig: "MEM_WRITE (Active)", addressHex: "0x10FF", dataHex: "0x42",
+                    wires: { ctrl: "0000 0010", addr: "0001 0000 1111 1111", data: "0100 0010" }
+                },
+                {
+                    title: "3. RAM Latch & Storage",
+                    desc: "RAM decodes address and latches 0x42 into memory cell array",
+                    from: 'mem', bus: 'controlBus', to: 'cpu',
+                    controlSig: "MEM_ACK (Saved)", addressHex: "0x10FF", dataHex: "0x42",
+                    wires: { ctrl: "0000 0110", addr: "0001 0000 1111 1111", data: "0100 0010" }
+                },
+                {
+                    title: "4. Cycle Complete",
+                    desc: "Write cycle finished. Control and Address buses reset to idle state.",
+                    from: 'cpu', bus: 'controlBus', to: 'mem',
+                    controlSig: "IDLE", addressHex: "0x0000", dataHex: "0x00",
+                    wires: { ctrl: "0000 0000", addr: "0000 0000 0000 0000", data: "0000 0000" }
+                }
+            ],
+            'IO_READ': [
+                {
+                    title: "1. Peripheral Interrupt Signal",
+                    desc: "Keyboard controller fires IRQ1 interrupt on Control Bus to CPU",
+                    from: 'io', bus: 'controlBus', to: 'cpu',
+                    controlSig: "IRQ_KEYBOARD (0x09)", addressHex: "PORT 0x60", dataHex: "0x1E (Key 'A')",
+                    wires: { ctrl: "0000 1000", addr: "0000 0000 0110 0000", data: "0001 1110" }
+                },
+                {
+                    title: "2. Port Address Selection",
+                    desc: "CPU acknowledges interrupt and outputs I/O Port Address 0x60 on Address Bus",
+                    from: 'cpu', bus: 'addressBus', to: 'io',
+                    controlSig: "IO_READ (Active)", addressHex: "PORT 0x60", dataHex: "0x1E",
+                    wires: { ctrl: "0001 0000", addr: "0000 0000 0110 0000", data: "0001 1110" }
+                },
+                {
+                    title: "3. Data Buffer Transfer",
+                    desc: "I/O Controller places ASCII keycode on Data Bus for CPU retrieval",
+                    from: 'io', bus: 'dataBus', to: 'cpu',
+                    controlSig: "IO_ACK", addressHex: "PORT 0x60", dataHex: "0x1E",
+                    wires: { ctrl: "0001 0001", addr: "0000 0000 0110 0000", data: "0001 1110" }
+                },
+                {
+                    title: "4. Input Cycle Done",
+                    desc: "CPU receives keypress scancode 'A' and clears interrupt line",
+                    from: 'cpu', bus: 'controlBus', to: 'io',
+                    controlSig: "IDLE", addressHex: "0x0000", dataHex: "0x00",
+                    wires: { ctrl: "0000 0000", addr: "0000 0000 0000 0000", data: "0000 0000" }
+                }
+            ],
+            'IO_WRITE': [
+                {
+                    title: "1. Address & Data Output",
+                    desc: "CPU sends Display Port Address (0x3F8) and character code 0x48 ('H')",
+                    from: 'cpu', bus: 'addressBus', to: 'io',
+                    controlSig: "IO_WRITE_REQ", addressHex: "PORT 0x3F8", dataHex: "0x48 ('H')",
+                    wires: { ctrl: "0010 0000", addr: "0000 0011 1111 1000", data: "0100 1000" }
+                },
+                {
+                    title: "2. Control Signal Issue",
+                    desc: "CPU drives IO_WRITE strobe signal on Control Bus",
+                    from: 'cpu', bus: 'controlBus', to: 'io',
+                    controlSig: "IO_WRITE (Active)", addressHex: "PORT 0x3F8", dataHex: "0x48 ('H')",
+                    wires: { ctrl: "0010 0001", addr: "0000 0011 1111 1000", data: "0100 1000" }
+                },
+                {
+                    title: "3. Display Buffer Render",
+                    desc: "Display controller receives byte 0x48 and renders character 'H' on screen",
+                    from: 'io', bus: 'controlBus', to: 'cpu',
+                    controlSig: "IO_READY", addressHex: "PORT 0x3F8", dataHex: "0x48 ('H')",
+                    wires: { ctrl: "0010 0011", addr: "0000 0011 1111 1000", data: "0100 1000" }
+                },
+                {
+                    title: "4. Output Cycle Complete",
+                    desc: "Display buffer update finalized. Bus lines returned to floating state.",
+                    from: 'cpu', bus: 'controlBus', to: 'io',
+                    controlSig: "IDLE", addressHex: "0x0000", dataHex: "0x00",
+                    wires: { ctrl: "0000 0000", addr: "0000 0000 0000 0000", data: "0000 0000" }
+                }
+            ]
+        };
+
+        // Start Simulation Trigger
+        function startSimulation(opType) {
+            activeOp = opType;
+            currentStepIndex = 0;
+            stepProgress = 0;
+            isRunning = true;
+            particles = [];
+            
+            // UI Status Update
+            document.getElementById('status-dot').className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+            document.getElementById('status-text').textContent = opType.replace('_', ' ') + " RUNNING";
+            document.getElementById('status-badge').className = "px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-300 font-semibold flex items-center gap-1.5";
+
+            renderStepsUI();
+            updateWireInspectors();
+        }
+
+        function setSpeed(sp) {
+            simSpeed = sp;
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                btn.className = "speed-btn px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300";
+            });
+            event.target.className = "speed-btn px-2 py-0.5 rounded bg-cyan-600 text-white font-bold";
+        }
+
+        // Main Render Loop
+        function draw() {
+            const rect = canvas.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const layout = getLayout(w, h);
+
+            // 1. Draw Background Grid
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+            ctx.lineWidth = 1;
+            const gridSize = 30;
+            for (let x = 0; x < w; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 0; y < h; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+
+            // 2. Draw System Bus Container Box
+            const b = layout.busBox;
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+            ctx.setLineDash([4, 4]);
+            ctx.strokeRect(b.x, b.y, b.width, b.height);
+            ctx.setLineDash([]);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+            ctx.font = "600 11px font-mono";
+            ctx.fillText("SYSTEM BUS HIGHWAY CONTAINER", b.x + b.width - 190, b.y + b.height + 18);
+
+            // 3. Draw The 3 Sub-Buses (Control, Address, Data)
+            drawBusLane(ctx, b.x + 10, layout.controlBus.y, b.width - 20, layout.controlBus.height, layout.controlBus.title, layout.controlBus.color);
+            drawBusLane(ctx, b.x + 10, layout.addressBus.y, b.width - 20, layout.addressBus.height, layout.addressBus.title, layout.addressBus.color);
+            drawBusLane(ctx, b.x + 10, layout.dataBus.y,    b.width - 20, layout.dataBus.height,    layout.dataBus.title,    layout.dataBus.color);
+
+            // 4. Draw Components (CPU, Memory, I/O)
+            drawComponentCard(ctx, layout.cpu, 'CPU (Processor)');
+            drawComponentCard(ctx, layout.mem, 'Memory (RAM)');
+            drawComponentCard(ctx, layout.io,  'Input & Output');
+
+            // 5. Draw Vertical Bus Connection Lines & Arrows
+            drawVerticalConnections(ctx, layout);
+
+            // 6. Update & Draw Particles during active simulation
+            if (isRunning && activeOp) {
+                updateSimulationLogic(layout);
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        function drawBusLane(ctx, x, y, width, height, title, color) {
+            ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(x, y - height/2, width, height, 6);
+            ctx.fill();
+            ctx.stroke();
+
+            // Label inside bus lane
+            ctx.fillStyle = color;
+            ctx.font = "bold 12px 'JetBrains Mono', monospace";
+            ctx.fillText(title.toUpperCase(), x + 15, y + 4);
+        }
+
+        function drawComponentCard(ctx, comp, label) {
+            ctx.fillStyle = "rgba(17, 24, 39, 0.9)";
+            ctx.strokeStyle = comp.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(comp.x - comp.width/2, comp.y - comp.height/2, comp.width, comp.height, 10);
+            ctx.fill();
+            ctx.stroke();
+
+            // Glow header bar
+            ctx.fillStyle = comp.color;
+            ctx.font = "bold 14px 'Inter', sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(label, comp.x, comp.y + 5);
+            ctx.textAlign = "start";
+        }
+
+        function drawVerticalConnections(ctx, layout) {
+            const comps = [layout.cpu, layout.mem, layout.io];
+            const buses = [layout.controlBus, layout.addressBus, layout.dataBus];
+
+            comps.forEach((comp, idx) => {
+                buses.forEach((bus, bIdx) => {
+                    const x = comp.x;
+                    const y1 = comp.y + comp.height/2;
+                    const y2 = bus.y;
+
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y1);
+                    ctx.lineTo(x, y2);
+                    ctx.stroke();
+
+                    // Arrowhead indicators
+                    const isUnidirectional = (bIdx === 1); // Address Bus
+                    if (isUnidirectional) {
+                        // CPU outputs down, Memory/IO receives up
+                        if (idx === 0) drawArrowHead(ctx, x, y2 - 4, 'down', bus.color);
+                        else drawArrowHead(ctx, x, y1 + 4, 'up', bus.color);
+                    } else {
+                        // Bi-directional double arrow heads
+                        drawArrowHead(ctx, x, y1 + 4, 'up', bus.color);
+                        drawArrowHead(ctx, x, y2 - 4, 'down', bus.color);
+                    }
+                });
+            });
+        }
+
+        function drawArrowHead(ctx, x, y, dir, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            if (dir === 'down') {
+                ctx.moveTo(x - 4, y - 6); ctx.lineTo(x + 4, y - 6); ctx.lineTo(x, y);
+            } else if (dir === 'up') {
+                ctx.moveTo(x - 4, y + 6); ctx.lineTo(x + 4, y + 6); ctx.lineTo(x, y);
+            }
+            ctx.fill();
+        }
+
+        function updateSimulationLogic(layout) {
+            const steps = OP_STEPS[activeOp];
+            if (!steps) return;
+
+            stepProgress += 0.012 * simSpeed;
+
+            if (stepProgress >= 1.0) {
+                stepProgress = 0;
+                currentStepIndex++;
+                if (currentStepIndex >= steps.length) {
+                    // Completed operation
+                    isRunning = false;
+                    document.getElementById('status-dot').className = "w-2 h-2 rounded-full bg-cyan-400";
+                    document.getElementById('status-text').textContent = "COMPLETED";
+                    document.getElementById('status-badge').className = "px-2.5 py-1 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-semibold flex items-center gap-1.5";
+                    currentStepIndex = steps.length - 1;
+                }
+                renderStepsUI();
+                updateWireInspectors();
+            }
+
+            const currentStep = steps[currentStepIndex];
+            if (currentStep) {
+                // Generate particle along path
+                const fromComp = layout[currentStep.from];
+                const toComp = layout[currentStep.to];
+                const targetBus = layout[currentStep.bus];
+
+                if (fromComp && toComp && targetBus) {
+                    drawActiveSignalParticle(ctx, fromComp.x, fromComp.y + fromComp.height/2, toComp.x, targetBus.y, stepProgress, targetBus.color);
+                }
+            }
+        }
+
+        function drawActiveSignalParticle(ctx, startX, startY, endX, busY, t, color) {
+            // Path: Vertical Down to Bus -> Horizontal along Bus -> Vertical Up to Target
+            let px = startX, py = startY;
+
+            if (t < 0.33) {
+                // Leg 1: Down from component to bus
+                const legT = t / 0.33;
+                px = startX;
+                py = startY + (busY - startY) * legT;
+            } else if (t < 0.66) {
+                // Leg 2: Across bus lane
+                const legT = (t - 0.33) / 0.33;
+                px = startX + (endX - startX) * legT;
+                py = busY;
+            } else {
+                // Leg 3: Up/Down to final component
+                const legT = (t - 0.66) / 0.34;
+                px = endX;
+                py = busY + (startY - busY) * legT;
+            }
+
+            // Glow Circle Particle
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(px, py, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(px, py, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        function renderStepsUI() {
+            if (!activeOp) return;
+            const steps = OP_STEPS[activeOp];
+            const container = document.getElementById('steps-container');
+            document.getElementById('step-counter').textContent = `Step ${currentStepIndex + 1} / ${steps.length}`;
+
+            container.innerHTML = steps.map((s, idx) => {
+                const isActive = (idx === currentStepIndex);
+                const isPassed = (idx < currentStepIndex);
+                const borderColor = isActive ? 'border-cyan-500 bg-cyan-950/30' : (isPassed ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-gray-800 bg-gray-900/40');
+                const badgeColor = isActive ? 'bg-cyan-500 text-black font-bold' : (isPassed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-gray-800 text-gray-400');
+
+                return `
+                    <div class="p-3 rounded-xl border ${borderColor} transition flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full ${badgeColor} flex items-center justify-center font-mono font-bold text-[11px]">
+                                ${idx + 1}
+                            </span>
+                            <div>
+                                <h4 class="font-bold text-white">${s.title}</h4>
+                                <p class="text-gray-400 text-[11px]">${s.desc}</p>
+                            </div>
+                        </div>
+                        <span class="font-mono text-[11px] ${isActive ? 'text-cyan-300 font-bold' : 'text-gray-500'}">
+                            ${s.bus.toUpperCase()}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateWireInspectors() {
+            if (!activeOp) return;
+            const steps = OP_STEPS[activeOp];
+            const s = steps[currentStepIndex] || steps[steps.length - 1];
+
+            document.getElementById('wire-control-name').textContent = s.controlSig;
+            document.getElementById('wire-control-bin').textContent = s.wires.ctrl;
+
+            const userAddr = document.getElementById('input-address').value;
+            const userData = document.getElementById('input-data').value;
+
+            document.getElementById('wire-address-hex').textContent = userAddr || s.addressHex;
+            document.getElementById('wire-address-bin').textContent = s.wires.addr;
+
+            document.getElementById('wire-data-hex').textContent = userData || s.dataHex;
+            document.getElementById('wire-data-bin').textContent = s.wires.data;
+        }
+
+        // Calculator logic
+        function updateCalculator() {
+            const addrBits = parseInt(document.getElementById('calc-address-width').value);
+            const dataBits = parseInt(document.getElementById('calc-data-width').value);
+
+            document.getElementById('val-address-bits').textContent = addrBits + '-bit';
+
+            // Calculate Max Memory (2^addrBits bytes)
+            const bytes = Math.pow(2, addrBits);
+            let memStr = "";
+            if (bytes >= Math.pow(1024, 4)) {
+                memStr = (bytes / Math.pow(1024, 4)).toFixed(1) + " TB";
+            } else if (bytes >= Math.pow(1024, 3)) {
+                memStr = (bytes / Math.pow(1024, 3)).toFixed(1) + " GB";
+            } else if (bytes >= Math.pow(1024, 2)) {
+                memStr = (bytes / Math.pow(1024, 2)).toFixed(1) + " MB";
+            } else if (bytes >= 1024) {
+                memStr = (bytes / 1024).toFixed(1) + " KB";
+            } else {
+                memStr = bytes + " Bytes";
+            }
+            document.getElementById('calc-ram-result').textContent = memStr;
+
+            // Calculate Bandwidth @ 3.2 GHz
+            const freqHz = 3.2 * 1e9;
+            const bytesPerCycle = dataBits / 8;
+            const bandwidthBytesSec = freqHz * bytesPerCycle;
+            const bwGBs = (bandwidthBytesSec / 1e9).toFixed(1);
+
+            document.getElementById('calc-bandwidth-result').textContent = bwGBs + " GB/s";
+        }
+
+        // Quiz Logic
+        function checkQuiz(qNum, selected, btn) {
+            const isCorrect = (qNum === 1 && selected === 'A') || (qNum === 2 && selected === 'B');
+            if (isCorrect) {
+                btn.className = "w-full text-left p-2.5 rounded bg-emerald-950 border border-emerald-500 text-emerald-300 font-bold transition flex items-center justify-between";
+                btn.innerHTML += ` <span>✓ Correct!</span>`;
+            } else {
+                btn.className = "w-full text-left p-2.5 rounded bg-rose-950 border border-rose-500 text-rose-300 font-bold transition flex items-center justify-between";
+                btn.innerHTML += ` <span>✗ Incorrect</span>`;
+            }
+        }
+
+        // Initial Startup
+        window.onload = () => {
+            resizeCanvas();
+            updateCalculator();
+            requestAnimationFrame(draw);
+        };
+    </script>
+</body>
+</html>
