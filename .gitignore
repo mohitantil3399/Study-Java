@@ -8,3 +8,11 @@
 *.exe
 out/
 bin/
+scripts/
+password.txt
+.env
+
+# SQL folder sensitive files
+/Sql/.env
+/Sql/password.txt
+
