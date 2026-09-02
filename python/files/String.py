@@ -1,4 +1,4 @@
-        name = "Mohit"
+name = "Mohit"
 subname = name[0:3]# 0 is starting index and 3 is ending index where 3 is excluded , creates a substring
 print("The main string is : ",name)
 print("The substring is : ", subname)
