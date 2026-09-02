@@ -2,7 +2,7 @@
 import os
 
 # specify the directory you want to list names
-directory_path = 'C:\Program Files'
+directory_path = r'C:\Program Files'
 
 # listing all the files in this directory 
 contents = os.listdir(directory_path)
