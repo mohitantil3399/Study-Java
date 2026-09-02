@@ -10,5 +10,6 @@ public class nestedloop7 {
              System.out.print(y+" ");y++;//the elements to come in the row
                 }System.out.println();
         }
+        sc.close();
     }
 }

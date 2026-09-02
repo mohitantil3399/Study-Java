@@ -14,5 +14,6 @@ printSum( i+1,n, sum);//i increses from 1 to n
         System.out.print("Enter a number : ");
         int n = sd.nextInt();
         printSum(1,n,0);//define the initial values
+        sd.close();
     }
 }

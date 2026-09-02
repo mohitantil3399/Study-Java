@@ -1,17 +1,22 @@
 import java.util.Scanner;
 public class Buffer {
-    void main(){
-        //This all the input statements are stored into buffer
+    public static void main(String[] args){
+        // All input statements are read from the System.in input stream buffer
         Scanner sc = new Scanner(System.in);
-        System.out.println("Enter number one: ");
+        System.out.print("Enter number one: ");
         int num1 = sc.nextInt();
-        System.out.println("Enter number2 :");
+        System.out.print("Enter number 2: ");
         int num2 = sc.nextInt();
-        System.out.println("Enter the string: ");
+
+        // Important: nextInt() does not consume the trailing newline '\n'.
+        // To read a String afterwards with nextLine(), consume the leftover newline first:
+        sc.nextLine(); 
+
+        System.out.print("Enter the string: ");
         String str = sc.nextLine();
-        System.out.println("Enter number3 :");
+        System.out.print("Enter number 3: ");
         int num3 = sc.nextInt();
-        System.out.println(num1 +"\n"+ num2+"\n"+ str+"\n"+num3);
+        System.out.println("Result:\n" + num1 + "\n" + num2 + "\n" + str + "\n" + num3);
         sc.close();
 
         // StringBuilder sb = new StringBuilder();

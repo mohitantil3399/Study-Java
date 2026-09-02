@@ -15,8 +15,9 @@ public class neastedloop11 {
                 System.out.print(s+" ");
             }for(int l = p-i;l>=1;l--){//adding decending space
                System.out.print(" ");
-            }System.out.println();
-        
+            }
+            System.out.println();
+        }
+        sc.close();
     }
-}
 }

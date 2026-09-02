@@ -44,6 +44,7 @@ public class nestedloop16 {
             }
           System.out.println();
         }
+        sc.close();
     }
   }
   

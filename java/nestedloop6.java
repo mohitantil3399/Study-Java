@@ -9,6 +9,6 @@ public class nestedloop6 {
                System.out.print(j+" ");
             }System.out.println();
         }
-
+        sc.close();
     }
 }

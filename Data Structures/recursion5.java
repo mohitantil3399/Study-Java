@@ -25,5 +25,6 @@ public class recursion5 {
         BigInteger n = ms.nextBigInteger();
         BigInteger ans = calcPower(x, n);
         System.out.println("The value of " + x + "^" + n + " is: " + ans);
+        ms.close();
     }
 }

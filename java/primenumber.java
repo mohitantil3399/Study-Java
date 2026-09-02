@@ -28,6 +28,6 @@ return ;
         System.out.print("Enter a number to check if its prime or not:");
        int n = sc.nextInt();
        checkPrime(n);
-
+       sc.close();
     }
 }

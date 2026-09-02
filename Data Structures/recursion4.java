@@ -17,6 +17,6 @@ public class recursion4 {
             System.out.println(a+" ");
             System.out.println(b+" ");
           printFib(a,b,n-2);
-          
+          ms.close();
         }
 }
