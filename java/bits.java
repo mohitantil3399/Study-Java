@@ -17,5 +17,6 @@ public class bits {
         int num = n&newBit;
         System.out.println(num);
        }
+       sc.close();
     }
 }

@@ -27,5 +27,6 @@ public class nestedloop15 {
         
         System.out.println();
     }
+        sc.close();
     }
 }

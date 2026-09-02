@@ -12,6 +12,7 @@ public class check {
             System.out.println("odd");
 
          }
+         sc.close();
     }
     
 }

@@ -15,5 +15,6 @@ public class printPErmutations {
         System.out.print("Enter your string: ");
         String str = sc.nextLine();
         printPermutations(str, 0,"");
+        sc.close();
     }
 }

@@ -20,7 +20,8 @@ public class checkArrayAscending {
         int arr[] = new int[size];
         for(int k = 0 ; k < arr.length;k++){
             arr[k] = sc.nextInt(); 
-        }System.out.println(checkAscending(0,arr));
-       
+        }
+        System.out.println(checkAscending(0,arr));
+        sc.close();
     }
 }

@@ -9,7 +9,8 @@ public class Queuecollectionframeworks {
         while(i<=10){
             q.add(i);
             i++;
-        }Scanner sc = new Scanner(System.in);
+        }
+        Scanner sc = new Scanner(System.in);
         System.out.print("Enter the number whose table you want to print : ");
         int n = sc.nextInt();
         System.out.println();
@@ -17,7 +18,8 @@ public class Queuecollectionframeworks {
         while(!q.isEmpty()){
             System.out.println(n*q.peek());
             q.remove();
-        }Queue <Integer> q1 = new ArrayDeque<>();
+        }
+        Queue <Integer> q1 = new ArrayDeque<>();
         System.out.print("Enter a number whose factorial you want to print : ");
         int m = sc.nextInt();
        for (int j = 1; j <=m;j++){
@@ -29,5 +31,6 @@ public class Queuecollectionframeworks {
             q1.remove();
          }
          System.out.println("The factorial of "+m + " is :"+factorial);
+         sc.close();
     }
 }

@@ -14,5 +14,6 @@ public class nestedloop8 {
              }
             }System.out.println();
         }
+        sc.close();
     }
 }

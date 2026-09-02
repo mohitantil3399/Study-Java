@@ -11,5 +11,6 @@ public class nestedloop13 {
             System.out.print(i+" ");
           }System.out.println();
         }
+        sc.close();
     }
 }

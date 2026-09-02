@@ -13,5 +13,6 @@ public class nestedloop1{
            //statement of outer loop:
            System.out.println(p);
         }
+        sc.close();
     }
 }

@@ -31,7 +31,7 @@ public class once {
         } while (choice != 0);
 
         System.out.println("Marks do not matter, but our efforts do. 🌟");
-        
+        sc.close();
     }
 }
 
